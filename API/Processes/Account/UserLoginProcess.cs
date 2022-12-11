@@ -30,13 +30,16 @@ public sealed class UserLoginProcess
     {
         private readonly UserManager<UserEntity> _userManager;
         private readonly SignInManager<UserEntity> _signInManager;
+        private readonly ITokenService _tokenService;
 
         public Handler(
             UserManager<UserEntity> userManager,
-            SignInManager<UserEntity> signInManager)
+            SignInManager<UserEntity> signInManager,
+            ITokenService tokenService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _tokenService = tokenService;
         }
 
         public async Task<Result<Response>> Handle(
@@ -65,7 +68,7 @@ public sealed class UserLoginProcess
             return Result<Response>.Success(new Response
             {
                 FullName = $"{user.FirstName} {user.LastName}",
-                Token = "Token must go here"
+                Token = _tokenService.CreateToken(user)
             });
         }
     }

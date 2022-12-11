@@ -61,13 +61,16 @@ public sealed class UserRegisterProcess
     public sealed class Handler : IRequestHandler<Request, Result<Response>>
     {
         private readonly UserManager<UserEntity> _userManager;
+        private readonly ITokenService _tokenService;
         private readonly IMapper _mapper;
 
         public Handler(
             UserManager<UserEntity> userManager,
+            ITokenService tokenService,
             IMapper mapper)
         {
             _userManager = userManager;
+            _tokenService = tokenService;
             _mapper = mapper;
         }
 
@@ -101,7 +104,7 @@ public sealed class UserRegisterProcess
             return Result<Response>.Success(new Response
             {
                 FullName = $"{user.FirstName} {user.LastName}",
-                Token = "Token must go here"
+                Token = _tokenService.CreateToken(user)
             });
         }
     }
