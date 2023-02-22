@@ -5,6 +5,15 @@ public static class SwaggerServiceExtenstions
     {
         services.AddEndpointsApiExplorer();
 
+        services.AddApiVersioning(_ =>
+        {
+            _.AssumeDefaultVersionWhenUnspecified = true;
+            _.ReportApiVersions = true;
+            _.DefaultApiVersion = new ApiVersion(1, 0);
+        });
+
+        services.AddVersionedApiExplorer(_ => _.GroupNameFormat = "'v'VVV");
+
         services.AddSwaggerGen(_ =>
         {
             _.CustomSchemaIds(_ => _.FullName?.Replace("+", "."));

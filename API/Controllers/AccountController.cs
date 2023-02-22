@@ -1,6 +1,7 @@
 ﻿namespace API.Controllers;
 
-[Route("api/account")]
+[Route("api/v{version:apiVersion}/account")]
+[ApiVersion("1.0")]
 [ApiController]
 public class AccountController : ControllerBase
 {
@@ -41,4 +42,7 @@ public class AccountController : ControllerBase
 
         return Ok(response.Value);
     }
+
+    [HttpOptions]
+    public void GetOptions() => Response.Headers.Add("Allowed", "POST");
 }
