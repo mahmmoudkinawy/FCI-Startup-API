@@ -10,12 +10,12 @@ public static class ApplicationServiceExtenstions
 
         services.AddScoped<ITokenService, TokenService>();
 
-        services.AddMediatR(Assembly.GetExecutingAssembly());
+        services.AddMediatR(_ => _.RegisterServicesFromAssemblyContaining<Program>());
 
         services.AddAutoMapper(Assembly.GetExecutingAssembly());
 
         services.AddDbContext<AlumniDbContext>(options =>
-            options.UseSqlServer(config.GetConnectionString("DefaultConnection")));
+            options.UseSqlServer(config.GetConnectionString(Constants.DefaultConnection)));
 
         return services;
     }

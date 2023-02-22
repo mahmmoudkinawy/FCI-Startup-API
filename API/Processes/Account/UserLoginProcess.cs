@@ -37,9 +37,12 @@ public sealed class UserLoginProcess
             SignInManager<UserEntity> signInManager,
             ITokenService tokenService)
         {
-            _userManager = userManager;
-            _signInManager = signInManager;
-            _tokenService = tokenService;
+            _userManager = userManager ??
+                throw new ArgumentNullException(nameof(userManager));
+            _signInManager = signInManager ??
+                throw new ArgumentNullException(nameof(signInManager));
+            _tokenService = tokenService ??
+                throw new ArgumentNullException(nameof(tokenService));
         }
 
         public async Task<Result<Response>> Handle(

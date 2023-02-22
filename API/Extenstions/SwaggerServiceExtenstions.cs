@@ -7,7 +7,7 @@ public static class SwaggerServiceExtenstions
 
         services.AddSwaggerGen(_ =>
         {
-            _.CustomSchemaIds(_ => _.FullName);
+            _.CustomSchemaIds(_ => _.FullName?.Replace("+", "."));
 
             _.AddSecurityDefinition("AlunmiApiBearerAuth", new OpenApiSecurityScheme()
             {

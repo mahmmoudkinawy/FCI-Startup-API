@@ -69,9 +69,12 @@ public sealed class UserRegisterProcess
             ITokenService tokenService,
             IMapper mapper)
         {
-            _userManager = userManager;
-            _tokenService = tokenService;
-            _mapper = mapper;
+            _userManager = userManager ??
+                throw new ArgumentNullException(nameof(userManager));
+            _tokenService = tokenService ??
+                throw new ArgumentNullException(nameof(tokenService));
+            _mapper = mapper ??
+                throw new ArgumentNullException(nameof(mapper));
         }
 
         public async Task<Result<Response>> Handle(

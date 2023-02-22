@@ -8,7 +8,8 @@ public class AccountController : ControllerBase
 
     public AccountController(IMediator mediator)
     {
-        _mediator = mediator;
+        _mediator = mediator ??
+            throw new ArgumentNullException(nameof(mediator));
     }
 
     [HttpPost("login")]
