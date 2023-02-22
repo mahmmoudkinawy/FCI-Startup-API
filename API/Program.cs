@@ -6,7 +6,7 @@ builder.Services.AddApplicationServices(builder.Configuration);
 
 builder.Services.AddSwaggerServices();
 
-builder.Services.AddIdentityServices(); 
+builder.Services.AddIdentityServices();
 
 builder.Services.AddConfigureCors();
 
@@ -14,7 +14,7 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 app.UseSwagger();
 
-app.UseSwaggerUI();
+app.UseSwaggerUI(_ => _.SwaggerEndpoint("/swagger/v1/swagger.json", "v1"));
 
 app.UseHttpsRedirection();
 

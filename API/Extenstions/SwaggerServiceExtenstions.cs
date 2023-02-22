@@ -14,9 +14,15 @@ public static class SwaggerServiceExtenstions
 
         services.AddVersionedApiExplorer(_ => _.GroupNameFormat = "'v'VVV");
 
+
         services.AddSwaggerGen(_ =>
         {
             _.CustomSchemaIds(_ => _.FullName?.Replace("+", "."));
+
+            var xmlCommentsFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+            var xmlCommentsFullPath = Path.Combine(AppContext.BaseDirectory, xmlCommentsFile);
+
+            _.IncludeXmlComments(xmlCommentsFullPath);
 
             _.AddSecurityDefinition("AlunmiApiBearerAuth", new OpenApiSecurityScheme()
             {
