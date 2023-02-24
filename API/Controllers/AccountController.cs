@@ -14,7 +14,7 @@ public class AccountController : ControllerBase
     }
 
     /// <summary>
-    /// login end point to authenticate the user
+    /// login endpoint to authenticate the user
     /// </summary>
     /// <param name="request"></param>
     /// <param name="cancellationToken"></param>
@@ -49,7 +49,7 @@ public class AccountController : ControllerBase
 
 
     /// <summary>
-    /// register end point to authenticate the user
+    /// register endpoint to authenticate the user
     /// </summary>
     /// <param name="request"></param>
     /// <param name="cancellationToken"></param>
@@ -88,7 +88,7 @@ public class AccountController : ControllerBase
     }
 
     /// <summary>
-    /// An end point the shows you what you can do with this controller.
+    /// An endpoint the shows you what you can do with this controller.
     /// </summary>
     [HttpOptions]
     public void GetOptions() => Response.Headers.Add("Allowed", "POST");

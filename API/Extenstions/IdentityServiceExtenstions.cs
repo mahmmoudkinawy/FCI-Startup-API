@@ -1,7 +1,9 @@
 ﻿namespace API.Extenstions;
 public static class IdentityServiceExtenstions
 {
-    public static IServiceCollection AddIdentityServices(this IServiceCollection services)
+    public static IServiceCollection AddIdentityServices(
+        this IServiceCollection services,
+        IConfiguration config)
     {
         services.AddIdentityCore<UserEntity>(_ =>
         {
@@ -13,7 +15,20 @@ public static class IdentityServiceExtenstions
             .AddSignInManager<SignInManager<UserEntity>>()
             .AddEntityFrameworkStores<AlumniDbContext>();
 
-        services.AddAuthentication();
+        services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            .AddJwtBearer(opts =>
+            {
+                opts.TokenValidationParameters = new()
+                {
+                    ValidateAudience = false,
+                    ValidateIssuer = false,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(
+                        Encoding.UTF8.GetBytes(config[Constants.TokenKey]!)),
+                    ClockSkew = TimeSpan.Zero
+                };
+            });
 
         return services;
     }

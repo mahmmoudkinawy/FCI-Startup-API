@@ -1,17 +1,15 @@
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-
 builder.Services.AddApplicationServices(builder.Configuration);
 
 builder.Services.AddSwaggerServices();
 
-builder.Services.AddIdentityServices();
+builder.Services.AddIdentityServices(builder.Configuration);
 
 builder.Services.AddConfigureCors();
 
 var app = builder.Build();
-// Configure the HTTP request pipeline.
+
 app.UseSwagger();
 
 app.UseSwaggerUI(_ => _.SwaggerEndpoint("/swagger/v1/swagger.json", "v1"));
@@ -19,6 +17,8 @@ app.UseSwaggerUI(_ => _.SwaggerEndpoint("/swagger/v1/swagger.json", "v1"));
 app.UseHttpsRedirection();
 
 app.UseCors(Constants.CorsPolicyName);
+
+app.UseAuthentication();
 
 app.UseAuthorization();
 
@@ -31,7 +31,7 @@ var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
 try
 {
     await dbContext.Database.MigrateAsync();
-    await Seed.SeedUsers(userManager);
+    await Seed.SeedUsers(userManager, dbContext);
 }
 catch (Exception ex)
 {

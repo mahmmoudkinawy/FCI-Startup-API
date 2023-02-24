@@ -86,7 +86,7 @@ public sealed class UserRegisterProcess
             {
                 return Result<Response>.Failure(new List<string>
                 {
-                    "User already exists"
+                    "User with this email already exists"
                 });
             }
 

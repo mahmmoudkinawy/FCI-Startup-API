@@ -1,5 +1,5 @@
 ﻿namespace API.Entities;
-public sealed class UserEntity : IdentityUser
+public sealed class UserEntity : IdentityUser<Guid>
 {
     public string? Gender { get; set; }
     public DateTime DateOfBirth { get; set; }
@@ -7,4 +7,6 @@ public sealed class UserEntity : IdentityUser
     public string? FirstName { get; set; }
     public string? LastName { get; set; }
     public DateTime GraduationYear { get; set; }
+
+    public ICollection<PostEntity> Posts { get; set; } = new List<PostEntity>();
 }
