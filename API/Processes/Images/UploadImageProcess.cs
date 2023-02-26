@@ -4,7 +4,7 @@ public sealed class UploadImageProcess
 {
     public sealed class Request : IRequest<Result<Response>>
     {
-        public IFormFile ImageFile { get; set; }
+        public IFormFile? ImageFile { get; set; }
     }
 
     public sealed class Response { }
@@ -13,17 +13,19 @@ public sealed class UploadImageProcess
     {
         public Validator()
         {
-            RuleFor(file => file.ImageFile.Length)
-                .GreaterThan(0)
-                .WithMessage("File is required.");
+            RuleFor(image => image.ImageFile)
+                .NotNull()
+                .WithMessage("File is required.")
+                .DependentRules(() =>
+                {
+                    RuleFor(image => image.ImageFile.Length)
+                        .LessThanOrEqualTo(10 * 1024 * 1024)
+                        .WithMessage("File size must be less than or equal to 10MB");
 
-            RuleFor(file => file.ImageFile.Length)
-                .LessThanOrEqualTo(10 * 1024 * 1024)
-                .WithMessage("File size must be less than or equal to 10MB");
-
-            RuleFor(file => file.ImageFile.ContentType)
-                .Must(contentType => contentType == "image/jpeg" || contentType == "image/png")
-                .WithMessage("Invalid file type. Only JPEG and PNG files are allowed.");
+                    RuleFor(image => image.ImageFile.ContentType)
+                        .Must(contentType => contentType == "image/jpeg" || contentType == "image/png")
+                        .WithMessage("Invalid file type. Only JPEG and PNG files are allowed.");
+                });
         }
     }
 
