@@ -87,6 +87,37 @@ public class AccountController : ControllerBase
         return Ok(response.Value);
     }
 
+
+    /// <summary>
+    /// upload image endpoint to make the user upload an image as profile pic.
+    /// </summary>
+    /// <param name="request"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns>Returns the url for the created image</returns>
+    /// <response code="200">Returns image that got uploaded.</response>
+    /// <response code="400">If the uploaded image contains error.</response>
+    /// <response code="401">User does not exist.</response>
+    [HttpPost("profile-image")]
+    [Authorize]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<IActionResult> UploadImageForProfile(
+        [FromForm] UploadImageProcess.Request request,
+        CancellationToken cancellationToken)
+    {
+        var response = await _mediator.Send(
+            request,
+            cancellationToken);
+
+        if (!response.IsSuccess)
+        {
+            return BadRequest(response.Errors);
+        }
+
+        return Ok(response.Value);
+    }
+
     /// <summary>
     /// An endpoint the shows you what you can do with this controller.
     /// </summary>

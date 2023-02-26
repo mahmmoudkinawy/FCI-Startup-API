@@ -7,6 +7,7 @@ public sealed class AlumniDbContext : IdentityDbContext<UserEntity, IdentityRole
     { }
 
     public DbSet<PostEntity> Posts { get; set; }
+    public DbSet<ImageEntity> Images { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -15,6 +16,10 @@ public sealed class AlumniDbContext : IdentityDbContext<UserEntity, IdentityRole
         builder.Entity<PostEntity>()
             .HasOne(u => u.User)
             .WithMany(p => p.Posts);
+
+        builder.Entity<ImageEntity>()
+            .HasOne(u => u.User)
+            .WithMany(p => p.Images);
     }
 
 }

@@ -4,6 +4,7 @@ using API.DbContexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace API.DbContexts.Migrations
 {
     [DbContext(typeof(AlumniDbContext))]
-    partial class AlumniDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230226203322_AddedPhotosTableToDb")]
+    partial class AddedPhotosTableToDb
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -22,7 +25,7 @@ namespace API.DbContexts.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("API.Entities.ImageEntity", b =>
+            modelBuilder.Entity("API.Entities.PhotoEntity", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -41,7 +44,7 @@ namespace API.DbContexts.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Images");
+                    b.ToTable("Photos");
                 });
 
             modelBuilder.Entity("API.Entities.PostEntity", b =>
@@ -284,10 +287,10 @@ namespace API.DbContexts.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("API.Entities.ImageEntity", b =>
+            modelBuilder.Entity("API.Entities.PhotoEntity", b =>
                 {
                     b.HasOne("API.Entities.UserEntity", "User")
-                        .WithMany("Images")
+                        .WithMany("Photos")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -359,7 +362,7 @@ namespace API.DbContexts.Migrations
 
             modelBuilder.Entity("API.Entities.UserEntity", b =>
                 {
-                    b.Navigation("Images");
+                    b.Navigation("Photos");
 
                     b.Navigation("Posts");
                 });

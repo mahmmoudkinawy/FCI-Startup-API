@@ -9,4 +9,5 @@ public sealed class UserEntity : IdentityUser<Guid>
     public DateTime GraduationYear { get; set; }
 
     public ICollection<PostEntity> Posts { get; set; } = new List<PostEntity>();
+    public ICollection<ImageEntity> Images { get; set; } = new List<ImageEntity>();
 }

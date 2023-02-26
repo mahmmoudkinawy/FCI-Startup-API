@@ -15,6 +15,7 @@ public sealed class UserRegisterProcess
     public sealed class Response
     {
         public string FullName { get; set; }
+        public string ImageUrl { get; set; }
         public string Token { get; set; }
     }
 
@@ -101,12 +102,14 @@ public sealed class UserRegisterProcess
                 {
                     errors.Add(error.Description);
                 }
+
                 return Result<Response>.Failure(errors);
             }
 
             return Result<Response>.Success(new Response
             {
                 FullName = $"{user.FirstName} {user.LastName}",
+                ImageUrl = Constants.UserDefaultImage,
                 Token = _tokenService.CreateToken(user)
             });
         }

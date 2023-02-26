@@ -5,8 +5,15 @@
 Relational:MaxIdentifierLength: 128
 RelationshipDiscoveryConvention:InverseNavigationCandidates: System.Collections.Generic.Dictionary`2[System.Type,System.Collections.Generic.SortedSet`1[System.Type]]
 SqlServer:ValueGenerationStrategy: IdentityColumn" Category="Model" Group="Expanded" />
+<Node Id = "PhotoEntity" Label="PhotoEntity" Name="PhotoEntity" BaseClass="" IsAbstract="False" ChangeTrackingStrategy="ChangeTrackingStrategy.Snapshot"  Annotations="Relational:TableName: Photos
+RelationshipDiscoveryConvention:NavigationCandidates: System.Collections.Immutable.ImmutableSortedDictionary`2[System.Reflection.PropertyInfo,System.ValueTuple`2[System.Type,System.Nullable`1[System.Boolean]]]" Category="EntityType" Group="Expanded" />
 <Node Id = "PostEntity" Label="PostEntity" Name="PostEntity" BaseClass="" IsAbstract="False" ChangeTrackingStrategy="ChangeTrackingStrategy.Snapshot"  Annotations="Relational:TableName: Posts
 RelationshipDiscoveryConvention:NavigationCandidates: System.Collections.Immutable.ImmutableSortedDictionary`2[System.Reflection.PropertyInfo,System.ValueTuple`2[System.Type,System.Nullable`1[System.Boolean]]]" Category="EntityType" Group="Expanded" />
+<Node Id = "PhotoEntity.Id" Label="Id (Guid)" Name="Id" Category="Property Primary" Type="Guid" MaxLength="None" Field="" PropertyAccessMode="PropertyAccessMode.Default" BeforeSaveBehavior="PropertySaveBehavior.Save" AfterSaveBehavior="PropertySaveBehavior.Save" Annotations="" IsPrimaryKey="True" IsForeignKey="False" IsRequired="True" IsIndexed="False" IsShadow="False" IsAlternateKey="False" IsConcurrencyToken="False" IsUnicode="True" ValueGenerated="ValueGenerated.OnAdd" />
+<Node Id = "PhotoEntity.User" Label="User (1)" Name="User" Category="Navigation Property" Type="UserEntity"  Field="" Dependent="" Principal="UserEntity" Inverse="Photos" PropertyAccessMode="PropertyAccessMode.Default" />
+<Node Id = "PhotoEntity.ImageUrl" Label="ImageUrl (string)" Name="ImageUrl" Category="Property Optional" Type="string" MaxLength="None" Field="" PropertyAccessMode="PropertyAccessMode.Default" BeforeSaveBehavior="PropertySaveBehavior.Save" AfterSaveBehavior="PropertySaveBehavior.Save" Annotations="" IsPrimaryKey="False" IsForeignKey="False" IsRequired="False" IsIndexed="False" IsShadow="False" IsAlternateKey="False" IsConcurrencyToken="False" IsUnicode="True" ValueGenerated="None" />
+<Node Id = "PhotoEntity.IsMain" Label="IsMain (bool)" Name="IsMain" Category="Property Required" Type="bool" MaxLength="None" Field="" PropertyAccessMode="PropertyAccessMode.Default" BeforeSaveBehavior="PropertySaveBehavior.Save" AfterSaveBehavior="PropertySaveBehavior.Save" Annotations="" IsPrimaryKey="False" IsForeignKey="False" IsRequired="True" IsIndexed="False" IsShadow="False" IsAlternateKey="False" IsConcurrencyToken="False" IsUnicode="True" ValueGenerated="None" />
+<Node Id = "PhotoEntity.UserId" Label="UserId (Guid)" Name="UserId" Category="Property Foreign" Type="Guid" MaxLength="None" Field="" PropertyAccessMode="PropertyAccessMode.Default" BeforeSaveBehavior="PropertySaveBehavior.Save" AfterSaveBehavior="PropertySaveBehavior.Save" Annotations="" IsPrimaryKey="False" IsForeignKey="True" IsRequired="True" IsIndexed="True" IsShadow="False" IsAlternateKey="False" IsConcurrencyToken="False" IsUnicode="True" ValueGenerated="None" />
 <Node Id = "UserEntity" Label="UserEntity" Name="UserEntity" BaseClass="" IsAbstract="False" ChangeTrackingStrategy="ChangeTrackingStrategy.Snapshot"  Annotations="Relational:Schema:
 Relational:TableName: AspNetUsers
 RelationshipDiscoveryConvention:NavigationCandidates: System.Collections.Immutable.ImmutableSortedDictionary`2[System.Reflection.PropertyInfo,System.ValueTuple`2[System.Type,System.Nullable`1[System.Boolean]]]" Category="EntityType" Group="Expanded" />
@@ -20,6 +27,7 @@ RelationshipDiscoveryConvention:NavigationCandidates: System.Collections.Immutab
 Relational:TableName: AspNetRoles
 RelationshipDiscoveryConvention:NavigationCandidates: System.Collections.Immutable.ImmutableSortedDictionary`2[System.Reflection.PropertyInfo,System.ValueTuple`2[System.Type,System.Nullable`1[System.Boolean]]]" Category="EntityType" Group="Expanded" />
 <Node Id = "UserEntity.Id" Label="Id (Guid)" Name="Id" Category="Property Primary" Type="Guid" MaxLength="None" Field="" PropertyAccessMode="PropertyAccessMode.Default" BeforeSaveBehavior="PropertySaveBehavior.Save" AfterSaveBehavior="PropertySaveBehavior.Save" Annotations="" IsPrimaryKey="True" IsForeignKey="False" IsRequired="True" IsIndexed="False" IsShadow="False" IsAlternateKey="False" IsConcurrencyToken="False" IsUnicode="True" ValueGenerated="ValueGenerated.OnAdd" />
+<Node Id = "UserEntity.Photos" Label="Photos (*)" Name="Photos" Category="Navigation Collection" Type="ICollection&lt;PhotoEntity&gt;"  Field="" Dependent="PhotoEntity" Principal="" Inverse="User" PropertyAccessMode="PropertyAccessMode.Default" />
 <Node Id = "UserEntity.Posts" Label="Posts (*)" Name="Posts" Category="Navigation Collection" Type="ICollection&lt;PostEntity&gt;"  Field="" Dependent="PostEntity" Principal="" Inverse="User" PropertyAccessMode="PropertyAccessMode.Default" />
 <Node Id = "UserEntity.AccessFailedCount" Label="AccessFailedCount (int)" Name="AccessFailedCount" Category="Property Required" Type="int" MaxLength="None" Field="" PropertyAccessMode="PropertyAccessMode.Default" BeforeSaveBehavior="PropertySaveBehavior.Save" AfterSaveBehavior="PropertySaveBehavior.Save" Annotations="" IsPrimaryKey="False" IsForeignKey="False" IsRequired="True" IsIndexed="False" IsShadow="False" IsAlternateKey="False" IsConcurrencyToken="False" IsUnicode="True" ValueGenerated="None" />
 <Node Id = "UserEntity.ConcurrencyStamp" Label="ConcurrencyStamp (string)" Name="ConcurrencyStamp" Category="Property Optional" Type="string" MaxLength="None" Field="" PropertyAccessMode="PropertyAccessMode.Default" BeforeSaveBehavior="PropertySaveBehavior.Save" AfterSaveBehavior="PropertySaveBehavior.Save" Annotations="" IsPrimaryKey="False" IsForeignKey="False" IsRequired="False" IsIndexed="False" IsShadow="False" IsAlternateKey="False" IsConcurrencyToken="True" IsUnicode="True" ValueGenerated="None" />
@@ -81,7 +89,14 @@ RelationshipDiscoveryConvention:NavigationCandidates: System.Collections.Immutab
 <Node Id = "IdentityUserToken&lt;Guid&gt;.Value" Label="Value (string)" Name="Value" Category="Property Optional" Type="string" MaxLength="None" Field="" PropertyAccessMode="PropertyAccessMode.Default" BeforeSaveBehavior="PropertySaveBehavior.Save" AfterSaveBehavior="PropertySaveBehavior.Save" Annotations="" IsPrimaryKey="False" IsForeignKey="False" IsRequired="False" IsIndexed="False" IsShadow="False" IsAlternateKey="False" IsConcurrencyToken="False" IsUnicode="True" ValueGenerated="None" />
   </Nodes>
   <Links>
+<Link Source = "IModel" Target="PhotoEntity" Category="Contains" />
 <Link Source = "IModel" Target="PostEntity" Category="Contains" />
+<Link Source = "PhotoEntity" Target="PhotoEntity.User" Category="Contains" />
+<Link Source = "PhotoEntity" Target="PhotoEntity.Id" Category="Contains" />
+<Link Source="PhotoEntity" Target="UserEntity" From="PhotoEntity.UserId" To="UserEntity.Id" Name="PhotoEntity -> UserEntity" Annotations="" IsUnique="False" Label="1:*" Category="Foreign Key" />
+<Link Source = "PhotoEntity" Target="PhotoEntity.ImageUrl" Category="Contains" />
+<Link Source = "PhotoEntity" Target="PhotoEntity.IsMain" Category="Contains" />
+<Link Source = "PhotoEntity" Target="PhotoEntity.UserId" Category="Contains" />
 <Link Source = "IModel" Target="UserEntity" Category="Contains" />
 <Link Source = "PostEntity" Target="PostEntity.User" Category="Contains" />
 <Link Source = "PostEntity" Target="PostEntity.Id" Category="Contains" />
@@ -91,6 +106,7 @@ RelationshipDiscoveryConvention:NavigationCandidates: System.Collections.Immutab
 <Link Source = "PostEntity" Target="PostEntity.UpdatedAt" Category="Contains" />
 <Link Source = "PostEntity" Target="PostEntity.UserId" Category="Contains" />
 <Link Source = "IModel" Target="IdentityRole&lt;Guid&gt;" Category="Contains" />
+<Link Source = "UserEntity" Target="UserEntity.Photos" Category="Contains" />
 <Link Source = "UserEntity" Target="UserEntity.Posts" Category="Contains" />
 <Link Source = "UserEntity" Target="UserEntity.Id" Category="Contains" />
 <Link Source = "UserEntity" Target="UserEntity.AccessFailedCount" Category="Contains" />

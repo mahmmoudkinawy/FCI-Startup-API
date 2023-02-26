@@ -39,6 +39,8 @@ public sealed class GetPostByIdProcess
 
         public async Task<Result<Response>> Handle(Request request, CancellationToken cancellationToken)
         {
+            ArgumentNullException.ThrowIfNull(request.PostId);
+
             var postFromDb = await _context.Posts.FindAsync(
                 new object?[] { request.PostId },
                 cancellationToken: cancellationToken);
