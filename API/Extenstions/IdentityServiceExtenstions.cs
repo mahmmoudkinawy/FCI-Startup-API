@@ -30,6 +30,13 @@ public static class IdentityServiceExtenstions
                 };
             });
 
+        services.AddAuthorization(policy =>
+        {
+            policy.FallbackPolicy = new AuthorizationPolicyBuilder()
+                .RequireAuthenticatedUser()
+                .Build();
+        });
+
         return services;
     }
 }

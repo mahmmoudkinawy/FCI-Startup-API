@@ -3,7 +3,6 @@
 [Route("api/v{version:apiVersion}/posts")]
 [ApiVersion("1.0")]
 [ApiController]
-[Authorize]
 public sealed class PostsController : ControllerBase
 {
     private readonly IMediator _mediator;
