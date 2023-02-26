@@ -10,9 +10,13 @@ builder.Services.AddConfigureCors();
 
 var app = builder.Build();
 
-app.UseSwagger();
+app.UseMiddleware<ExceptionMiddleware>();
 
-app.UseSwaggerUI(_ => _.SwaggerEndpoint("/swagger/v1/swagger.json", "v1"));
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI(_ => _.SwaggerEndpoint("/swagger/v1/swagger.json", "v1"));
+}
 
 app.UseHttpsRedirection();
 
