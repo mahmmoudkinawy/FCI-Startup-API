@@ -16,6 +16,7 @@ public sealed class PostsController : ControllerBase
     /// <summary>
     /// endpoint for returning all the posts
     /// </summary>
+    /// <param name="postsParams">Params for pagination searching etc.</param>
     /// <param name="cancellationToken"></param>
     /// <returns>Endpoint for returning all the posts</returns>
     /// <response code="200">Returns all posts in the db.</response>
@@ -23,11 +24,28 @@ public sealed class PostsController : ControllerBase
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<IActionResult> GetAllPosts(CancellationToken cancellationToken)
+    public async Task<IActionResult> GetAllPosts(
+        [FromQuery] PostsParams postsParams,
+        CancellationToken cancellationToken)
     {
         var response = await _mediator.Send(
-            new GetAllPostsProcess.Request { },
+            new GetAllPostsProcess.Request
+            {
+                PageSize = postsParams.PageSize,
+                PageNumber = postsParams.PageNumber,
+                Keyword = postsParams.Keyword
+            },
             cancellationToken);
+
+        var paginationMetaData = new
+        {
+            totalCount = response.TotalCount,
+            totalPages = response.TotalPages,
+            pageNumber = response.CurrentPage,
+            pageSize = response.PageSize
+        };
+
+        Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(paginationMetaData));
 
         return Ok(response);
     }

@@ -2,8 +2,12 @@
 
 public sealed class GetAllPostsProcess
 {
-    public sealed class Request : IRequest<IReadOnlyList<Response>>
-    { }
+    public sealed class Request : IRequest<PagedList<Response>>
+    {
+        public int PageNumber { get; set; }
+        public int PageSize { get; set; }
+        public string? Keyword { get; set; }
+    }
 
     public sealed class Response
     {
@@ -22,7 +26,7 @@ public sealed class GetAllPostsProcess
         }
     }
 
-    public sealed class Handler : IRequestHandler<Request, IReadOnlyList<Response>>
+    public sealed class Handler : IRequestHandler<Request, PagedList<Response>>
     {
         private readonly AlumniDbContext _context;
         private readonly IMapper _mapper;
@@ -35,15 +39,23 @@ public sealed class GetAllPostsProcess
                 throw new ArgumentNullException(nameof(mapper));
         }
 
-        public async Task<IReadOnlyList<Response>> Handle(
+        public async Task<PagedList<Response>> Handle(
             Request request,
             CancellationToken cancellationToken)
         {
-            var postsFromDb = await _context.Posts.ToListAsync(cancellationToken: cancellationToken);
+            var query = _context.Posts.AsQueryable();
 
-            var postsToReturn = _mapper.Map<IReadOnlyList<Response>>(postsFromDb);
+            if (!string.IsNullOrWhiteSpace(request.Keyword))
+            {
+                // I know the above code is very bad and ToLower() will make it slow!
+                // But it's only small api for graduation.
+                query = query.Where(_ => _.Content.ToLower().Contains(request.Keyword));
+            }
 
-            return postsToReturn;
+            return await PagedList<Response>.CreateAsync(
+                query.ProjectTo<Response>(_mapper.ConfigurationProvider).AsNoTracking(),
+                request.PageNumber,
+                request.PageSize);
         }
     }
 }
