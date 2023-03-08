@@ -8,8 +8,12 @@ public sealed class Constants
 
     public const string TokenKey = "Token:Key";
 
-    public const string AzureBlobConnectionString = "AzureBlobSettings:ConnectionString";
-    public const string AzureBlobContainerName = "AzureBlobSettings:ContainerName";
+    public sealed class CloudinarySettings
+    {
+        public const string CloudName = "CloudinarySettings:CloudName";
+        public const string ApiKey = "CloudinarySettings:ApiKey";
+        public const string ApiSecret = "CloudinarySettings:ApiSecret";
+    }
 
     public const string UserDefaultImage = "https://imagesforfci.blob.core.windows.net/imagesforfcistartupbackend/default.png";
 }

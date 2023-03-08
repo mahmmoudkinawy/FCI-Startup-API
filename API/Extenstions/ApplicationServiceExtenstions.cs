@@ -12,8 +12,6 @@ public static class ApplicationServiceExtenstions
 
         services.AddScoped<IPhotoService, PhotoService>();
 
-        services.AddSingleton(_ => new BlobServiceClient(config[Constants.AzureBlobConnectionString]));
-
         services.AddMediatR(_ => _.RegisterServicesFromAssemblyContaining<Program>());
 
         services.AddAutoMapper(Assembly.GetExecutingAssembly());

@@ -2,36 +2,36 @@
 
 public sealed class PhotoService : IPhotoService
 {
-    private readonly BlobServiceClient _blobServiceClient;
-    private readonly IConfiguration _config;
+    private readonly Cloudinary _cloudinary;
 
-    public PhotoService(BlobServiceClient blobServiceClient, IConfiguration config)
+    public PhotoService(IConfiguration config)
     {
-        _blobServiceClient = blobServiceClient ??
-            throw new ArgumentNullException(nameof(blobServiceClient));
-        _config = config ??
-            throw new ArgumentNullException(nameof(config));
+        _cloudinary = new Cloudinary(
+            new Account
+            {
+                Cloud = config[Constants.CloudinarySettings.CloudName],
+                ApiKey = config[Constants.CloudinarySettings.ApiKey],
+                ApiSecret = config[Constants.CloudinarySettings.ApiSecret]
+            });
     }
 
     public async Task<string> UploadPhotoAsync(IFormFile imageFile)
     {
+        var uploadResult = new ImageUploadResult();
 
-        var containerName = _config[Constants.AzureBlobContainerName];
-
-        using var stream = imageFile.OpenReadStream();
-
-        var containerClient = _blobServiceClient.GetBlobContainerClient(containerName);
-        await containerClient.CreateIfNotExistsAsync();
-
-        var imageName = $"{imageFile.FileName}";
-        var blobClient = containerClient.GetBlobClient(imageName);
-        var options = new BlobHttpHeaders
+        if (imageFile.Length > 0)
         {
-            ContentType = "image/jpeg"
-        };
+            using var stream = imageFile.OpenReadStream();
+            var uploadParams = new ImageUploadParams
+            {
+                File = new FileDescription(imageFile.FileName, stream),
+                Transformation = new Transformation().Width(500).Height(500).Crop("fill").Gravity("face")
+            };
 
-        var result = await blobClient.UploadAsync(stream, options);
+            uploadResult = await _cloudinary.UploadAsync(uploadParams);
+        }
 
-        return $"{_blobServiceClient.Uri}{containerName}/{imageName}";
+        return uploadResult.Url.AbsoluteUri;
     }
+
 }

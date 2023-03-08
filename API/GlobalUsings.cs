@@ -10,9 +10,9 @@ global using API.Processes.Users;
 global using API.Services;
 global using AutoMapper;
 global using AutoMapper.QueryableExtensions;
-global using Azure.Storage.Blobs;
-global using Azure.Storage.Blobs.Models;
 global using Bogus;
+global using CloudinaryDotNet;
+global using CloudinaryDotNet.Actions;
 global using FluentValidation;
 global using FluentValidation.AspNetCore;
 global using MediatR;
@@ -29,3 +29,5 @@ global using System.Reflection;
 global using System.Security.Claims;
 global using System.Text;
 global using System.Text.Json;
+
+
