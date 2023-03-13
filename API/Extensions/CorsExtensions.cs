@@ -1,4 +1,4 @@
-﻿namespace API.Extenstions;
+﻿namespace API.Extensions;
 public static class CorsExtensions
 {
     public static IServiceCollection AddConfigureCors(this IServiceCollection services)

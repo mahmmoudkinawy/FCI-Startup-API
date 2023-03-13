@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace API.DbContexts.Migrations
 {
     [DbContext(typeof(AlumniDbContext))]
-    [Migration("20230226203322_AddedPhotosTableToDb")]
-    partial class AddedPhotosTableToDb
+    [Migration("20230310162003_ChangedTheDbToSqlServerAndAddedMigrationsAgain")]
+    partial class ChangedTheDbToSqlServerAndAddedMigrationsAgain
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -25,7 +25,7 @@ namespace API.DbContexts.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("API.Entities.PhotoEntity", b =>
+            modelBuilder.Entity("API.Entities.ImageEntity", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -44,7 +44,7 @@ namespace API.DbContexts.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Photos");
+                    b.ToTable("Images");
                 });
 
             modelBuilder.Entity("API.Entities.PostEntity", b =>
@@ -287,10 +287,10 @@ namespace API.DbContexts.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("API.Entities.PhotoEntity", b =>
+            modelBuilder.Entity("API.Entities.ImageEntity", b =>
                 {
                     b.HasOne("API.Entities.UserEntity", "User")
-                        .WithMany("Photos")
+                        .WithMany("Images")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -362,7 +362,7 @@ namespace API.DbContexts.Migrations
 
             modelBuilder.Entity("API.Entities.UserEntity", b =>
                 {
-                    b.Navigation("Photos");
+                    b.Navigation("Images");
 
                     b.Navigation("Posts");
                 });

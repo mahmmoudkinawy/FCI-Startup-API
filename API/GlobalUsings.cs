@@ -1,6 +1,6 @@
 ﻿global using API.DbContexts;
 global using API.Entities;
-global using API.Extenstions;
+global using API.Extensions;
 global using API.Helpers;
 global using API.Middleware;
 global using API.Processes.Account;
