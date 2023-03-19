@@ -15,14 +15,19 @@ public sealed class GetAllPostsProcess
         public DateTime CreatedAt { get; init; }
         public DateTime UpdatedAt { get; set; }
         public string Content { get; set; }
-        public Guid UserId { get; set; }
+        public Guid OwnerId { get; set; }
+        public string OwnerName { get; set; }
+        public string OwnerImageUrl { get; set; }
     }
 
     public sealed class Mapper : Profile
     {
         public Mapper()
         {
-            CreateMap<PostEntity, Response>();
+            CreateMap<PostEntity, Response>()
+                .ForMember(p => p.OwnerId, dest => dest.MapFrom(src => src.User.Id))
+                .ForMember(p => p.OwnerName, dest => dest.MapFrom(src => $"{src.User.FirstName} {src.User.LastName}"))
+                .ForMember(p => p.OwnerImageUrl, dest => dest.MapFrom(src => src.User.Images.FirstOrDefault(i => i.IsMain)!.ImageUrl));
         }
     }
 
