@@ -14,6 +14,35 @@ public sealed class UsersController : ControllerBase
     }
 
     /// <summary>
+    /// end point for getting the user by id.
+    /// </summary>
+    /// <param name="request"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns>Returns the user with the posts along with his/her main image.</returns>
+    /// <response code="200">Returns the user by id.</response>
+    /// <response code="401">User does not exist.</response>
+    [HttpGet("{userId}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<IActionResult> GetUserById(
+        [FromRoute] Guid userId,
+        CancellationToken cancellationToken)
+    {
+        var response = await _mediator.Send(
+            new GetUserByIdProcess.Request
+            {
+                UserId = userId,
+            }, cancellationToken);
+
+        if (!response.IsSuccess)
+        {
+            return NotFound();
+        }
+
+        return Ok(response.Value);
+    }
+
+    /// <summary>
     /// end point for getting the current logged in user.
     /// </summary>
     /// <param name="request"></param>
