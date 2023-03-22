@@ -46,6 +46,7 @@ public sealed class PostsController : ControllerBase
         };
 
         Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(paginationMetaData));
+        Response.Headers.Add("Access-Control-Expose-Headers", "X-Pagination");
 
         return Ok(response);
     }
