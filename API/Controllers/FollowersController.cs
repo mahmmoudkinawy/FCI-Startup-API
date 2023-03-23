@@ -73,7 +73,7 @@ public sealed class FollowersController : ControllerBase
     }
 
     /// <summary>
-    /// end point for getting the current user followers.
+    /// end point for getting the followed by users for the current user.
     /// </summary>
     /// <param name="cancellationToken"></param>
     /// <returns>Returns current user followers</returns>
