@@ -8,6 +8,7 @@ public sealed class AlumniDbContext : IdentityDbContext<UserEntity, IdentityRole
 
     public DbSet<PostEntity> Posts { get; set; }
     public DbSet<ImageEntity> Images { get; set; }
+    public DbSet<UserFollowEntity> Followers { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -20,6 +21,21 @@ public sealed class AlumniDbContext : IdentityDbContext<UserEntity, IdentityRole
         builder.Entity<ImageEntity>()
             .HasOne(u => u.User)
             .WithMany(p => p.Images);
+
+        builder.Entity<UserFollowEntity>()
+            .HasKey(k => new { k.SourceUserId, k.DestinationUserId });
+
+        builder.Entity<UserFollowEntity>()
+            .HasOne(u => u.SourceUser)
+            .WithMany(u => u.FollowersUsers)
+            .HasForeignKey(u => u.SourceUserId)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        builder.Entity<UserFollowEntity>()
+            .HasOne(u => u.DestinationUser)
+            .WithMany(u => u.FollowedByUsers)
+            .HasForeignKey(u => u.DestinationUserId)
+            .OnDelete(DeleteBehavior.NoAction);
     }
 
 }

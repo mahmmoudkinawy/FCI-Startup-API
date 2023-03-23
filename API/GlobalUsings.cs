@@ -4,6 +4,7 @@ global using API.Extensions;
 global using API.Helpers;
 global using API.Middleware;
 global using API.Processes.Account;
+global using API.Processes.Followers;
 global using API.Processes.Images;
 global using API.Processes.Posts;
 global using API.Processes.Users;
@@ -29,5 +30,6 @@ global using System.Reflection;
 global using System.Security.Claims;
 global using System.Text;
 global using System.Text.Json;
+
 
 
