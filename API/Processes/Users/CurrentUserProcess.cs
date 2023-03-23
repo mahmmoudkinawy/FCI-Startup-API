@@ -6,8 +6,7 @@ public sealed class CurrentUserProcess
 
     public sealed class Response
     {
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
+        public string FullName { get; set; }
         public string Gender { get; set; }
         public int Age { get; set; }
         public DateTime JoinedAt { get; set; }
@@ -27,7 +26,8 @@ public sealed class CurrentUserProcess
         public Mapper()
         {
             CreateMap<UserEntity, Response>()
-                .ForMember(m => m.Age, o => o.MapFrom(u => u.DateOfBirth.CalculateAge()));
+                .ForMember(dest => dest.Age, o => o.MapFrom(u => u.DateOfBirth.CalculateAge()))
+                .ForMember(dest => dest.FullName, opt => opt.MapFrom(u => $"{u.FirstName} {u.LastName}"));
             CreateMap<ImageEntity, ImageDto>();
         }
     }

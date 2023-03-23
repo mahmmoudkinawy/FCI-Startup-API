@@ -55,7 +55,7 @@ public sealed class UserRegisterProcess
         public Mapper()
         {
             CreateMap<Request, UserEntity>()
-                .ForMember(_ => _.UserName, _ => _.MapFrom(_ => _.Email));
+                .ForMember(dest => dest.UserName, opt => opt.MapFrom(u => u.Email));
         }
     }
 

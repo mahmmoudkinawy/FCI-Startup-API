@@ -43,7 +43,33 @@ public sealed class FollowersController : ControllerBase
             return BadRequest(response.Errors);
         }
 
-        return Ok("Follower The User with the gives id successfully.");
+        return Ok("Followed The User with the gives id successfully.");
+    }
+
+
+    /// <summary>
+    /// end point for getting the current user followers.
+    /// </summary>
+    /// <param name="cancellationToken"></param>
+    /// <returns>Returns current user followers</returns>
+    /// <remarks>
+    /// Sample request:
+    ///
+    ///     GET /followers
+    /// </remarks>
+    /// <response code="200">Returns current user followers.</response>
+    /// <response code="401">User does not exist.</response>
+    [HttpGet]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<IActionResult> GetCurrentUserFollowers(
+        CancellationToken cancellationToken)
+    {
+        var response = await _mediator.Send(
+            new GetCurrentUserFollowersProcess.Request { },
+            cancellationToken);
+
+        return Ok(response);
     }
 
 }

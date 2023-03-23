@@ -31,13 +31,11 @@ public sealed class UserLoginProcess
     {
         private readonly UserManager<UserEntity> _userManager;
         private readonly SignInManager<UserEntity> _signInManager;
-        private readonly AlumniDbContext _context;
         private readonly ITokenService _tokenService;
 
         public Handler(
             UserManager<UserEntity> userManager,
             SignInManager<UserEntity> signInManager,
-            AlumniDbContext context,
             ITokenService tokenService)
         {
             _userManager = userManager ??
@@ -46,8 +44,6 @@ public sealed class UserLoginProcess
                 throw new ArgumentNullException(nameof(signInManager));
             _tokenService = tokenService ??
                 throw new ArgumentNullException(nameof(tokenService));
-            _context = context ??
-                throw new ArgumentNullException(nameof(context));
         }
 
         public async Task<Result<Response>> Handle(
