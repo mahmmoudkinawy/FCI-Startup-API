@@ -1,11 +1,12 @@
-﻿namespace API.Processes.Followers;
+﻿namespace API.Processes.Users;
 
-public sealed class GetCurrentUserFollowersProcess
+public sealed class GetAllUsersProcess
 {
     public sealed class Request : IRequest<IReadOnlyList<Response>> { }
 
     public sealed class Response
     {
+        public Guid Id { get; set; }
         public string FullName { get; set; }
         public string Gender { get; set; }
         public int Age { get; set; }
@@ -27,17 +28,17 @@ public sealed class GetCurrentUserFollowersProcess
 
     public sealed class Handler : IRequestHandler<Request, IReadOnlyList<Response>>
     {
-        private readonly AlumniDbContext _context;
+        private readonly UserManager<UserEntity> _userManager;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IMapper _mapper;
 
         public Handler(
-            AlumniDbContext context,
+            UserManager<UserEntity> userManager,
             IHttpContextAccessor httpContextAccessor,
             IMapper mapper)
         {
-            _context = context ??
-                throw new ArgumentNullException(nameof(context));
+            _userManager = userManager ??
+                throw new ArgumentNullException(nameof(userManager));
             _httpContextAccessor = httpContextAccessor ??
                 throw new ArgumentNullException(nameof(httpContextAccessor));
             _mapper = mapper ??
@@ -48,15 +49,13 @@ public sealed class GetCurrentUserFollowersProcess
         {
             var userId = _httpContextAccessor.HttpContext.User.GetUserById();
 
-            var followers = await _context.Followers
-                .Include(c => c.DestinationUser)
-                .Where(u => u.SourceUserId == userId)
-                .Select(u => u.DestinationUser)
+            var users = await _userManager.Users
+                .Include(i => i.Images)
+                .Where(u => u.Id != userId)
                 .ProjectTo<Response>(_mapper.ConfigurationProvider)
                 .ToListAsync(cancellationToken: cancellationToken);
 
-            return followers;
+            return users;
         }
-
     }
 }

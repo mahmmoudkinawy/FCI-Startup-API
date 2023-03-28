@@ -48,7 +48,7 @@ public sealed class FollowersController : ControllerBase
 
 
     /// <summary>
-    /// end point for getting the current user followers.
+    /// end point for getting the followers who is the current user follow. "People who is the current user follow"
     /// </summary>
     /// <param name="cancellationToken"></param>
     /// <returns>Returns current user followers</returns>
@@ -73,14 +73,14 @@ public sealed class FollowersController : ControllerBase
     }
 
     /// <summary>
-    /// end point for getting the followed by users for the current user.
+    /// end point for getting the followed by users for the current user. "People who follows the current user"
     /// </summary>
     /// <param name="cancellationToken"></param>
     /// <returns>Returns current user followers</returns>
     /// <remarks>
     /// Sample request:
     ///
-    ///     GET /followers/current-user-followers
+    ///     GET /followers/current-user-followed-by
     /// </remarks>
     /// <response code="200">Returns current user followers.</response>
     /// <response code="401">User does not exist.</response>

@@ -13,6 +13,27 @@ public sealed class UsersController : ControllerBase
             throw new ArgumentNullException(nameof(mediator));
     }
 
+
+    /// <summary>
+    /// end point for getting all the users.
+    /// </summary>
+    /// <param name="cancellationToken"></param>
+    /// <returns>Returns the users along with his/her main image.</returns>
+    /// <response code="200">Returns all the users.</response>
+    /// <response code="401">User does not exist.</response>
+    [HttpGet]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<IActionResult> GetUsers(
+        CancellationToken cancellationToken)
+    {
+        var response = await _mediator.Send(
+             new GetAllUsersProcess.Request { },
+            cancellationToken);
+
+        return Ok(response);
+    }
+
     /// <summary>
     /// end point for getting the user by id.
     /// </summary>

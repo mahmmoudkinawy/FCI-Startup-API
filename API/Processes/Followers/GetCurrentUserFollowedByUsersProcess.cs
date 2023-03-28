@@ -48,13 +48,14 @@ public sealed class GetCurrentUserFollowedByUsersProcess
         {
             var userId = _httpContextAccessor.HttpContext.User.GetUserById();
 
-            var users = await _context.Users
-                .Include(c => c.FollowersUsers)
-                .Where(u => u.FollowedByUsers.Any(f => f.DestinationUserId == userId))
+            var followers = await _context.Followers
+                .Include(c => c.SourceUser)
+                .Where(u => u.DestinationUserId == userId)
+                .Select(u => u.SourceUser)
                 .ProjectTo<Response>(_mapper.ConfigurationProvider)
                 .ToListAsync(cancellationToken: cancellationToken);
 
-            return users;
+            return followers;
         }
 
     }
