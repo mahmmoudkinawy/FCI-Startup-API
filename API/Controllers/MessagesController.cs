@@ -1,6 +1,4 @@
-﻿using API.Processes.Messages;
-
-namespace API.Controllers;
+﻿namespace API.Controllers;
 
 [Route("api/v{version:apiVersion}/messages")]
 [ApiVersion("1.0")]
@@ -53,4 +51,45 @@ public sealed class MessagesController : ControllerBase
 
         return Ok(response.Value);
     }
+
+
+    /// <summary>
+    /// endpoint for getting messages for the logged in user.
+    /// </summary>
+    /// <param name="request"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns>Returns the create message.</returns>
+    /// <remarks>
+    /// Sample request:
+    ///
+    ///     GET /messages?container=Inbox
+    /// </remarks>
+    /// <remarks>
+    /// Sample containers params are ['Outbox', 'Inbox', 'Unread'] and it's Unread be default.
+    /// </remarks>
+    /// <response code="200">Returns the created message.</response>
+    /// <response code="401">User does not exist.</response>
+    [HttpGet]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<IActionResult> GetMessageForUser(
+        [FromQuery] MessageParams messageParams,
+        CancellationToken cancellationToken)
+    {
+        var response = await _mediator.Send(
+            new GetMessagesForUserProcess.Request
+            {
+                Container = messageParams.Container,
+                PageNumber = messageParams.PageNumber,
+                PageSize = messageParams.PageSize
+            }, cancellationToken);
+
+        Response.AddPaginationHeader(response.CurrentPage, 
+            response.PageSize, 
+            response.TotalPages, 
+            response.TotalCount);
+
+        return Ok(response);
+    }
+
 }

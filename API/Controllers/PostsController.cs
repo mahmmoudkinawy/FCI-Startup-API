@@ -37,16 +37,10 @@ public sealed class PostsController : ControllerBase
             },
             cancellationToken);
 
-        var paginationMetaData = new
-        {
-            totalCount = response.TotalCount,
-            totalPages = response.TotalPages,
-            pageNumber = response.CurrentPage,
-            pageSize = response.PageSize
-        };
-
-        Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(paginationMetaData));
-        Response.Headers.Add("Access-Control-Expose-Headers", "X-Pagination");
+        Response.AddPaginationHeader(response.CurrentPage,
+            response.PageSize,
+            response.TotalPages,
+            response.TotalCount);
 
         return Ok(response);
     }
