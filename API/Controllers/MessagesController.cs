@@ -84,12 +84,83 @@ public sealed class MessagesController : ControllerBase
                 PageSize = messageParams.PageSize
             }, cancellationToken);
 
-        Response.AddPaginationHeader(response.CurrentPage, 
-            response.PageSize, 
-            response.TotalPages, 
+        Response.AddPaginationHeader(response.CurrentPage,
+            response.PageSize,
+            response.TotalPages,
             response.TotalCount);
 
         return Ok(response);
+    }
+
+
+    /// <summary>
+    /// endpoint for getting thread messages for the logged in user with some other user.
+    /// </summary>
+    /// <param name="request"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns>Returns the thread messages.</returns>
+    /// <remarks>
+    /// Sample request:
+    ///
+    ///     GET /thread/388ec0a8-c9b5-4277-a27f-820e5cf786dd
+    /// </remarks>
+    /// <response code="200">Returns the thread messages.</response>
+    /// <response code="401">User does not exist.</response>
+    [HttpGet("thread/{recipientId}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<IActionResult> GetMessageThread(
+        [FromRoute] Guid recipientId,
+        CancellationToken cancellationToken)
+    {
+        var response = await _mediator.Send(
+           new GetMessageThreadProcess.Request
+           {
+               RecipientId = recipientId
+           }, cancellationToken);
+
+        if (response is null)
+        {
+            return BadRequest("Recipient with the given Id does not exist");
+        }
+
+        return Ok(response);
+    }
+
+
+    /// <summary>
+    /// endpoint for delete a message for a user.
+    /// </summary>
+    /// <param name="request"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns>Returns no content.</returns>
+    /// <remarks>
+    /// Sample request:
+    ///
+    ///     DELETE /messages/388ec0a8-c9b5-4277-a27f-820e5cf786dd
+    /// </remarks>
+    /// <response code="200">Returns no content</response>
+    /// <response code="400">There exist some validation errors.</response>
+    /// <response code="401">User does not exist.</response>
+    [HttpDelete("{messageId}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<IActionResult> DeleteMessage(
+        [FromRoute] Guid messageId,
+        CancellationToken cancellationToken)
+    {
+        var response = await _mediator.Send(
+            new DeleteMessageProcess.Request
+            {
+                MessageId = messageId
+            }, cancellationToken);
+
+        if (!response.IsSuccess)
+        {
+            return BadRequest(response.Errors);
+        }
+
+        return NoContent();
     }
 
 }
