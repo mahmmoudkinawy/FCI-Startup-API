@@ -14,4 +14,7 @@ public sealed class UserEntity : IdentityUser<Guid>
 
     public ICollection<UserFollowEntity> FollowersUsers { get; set; }
     public ICollection<UserFollowEntity> FollowedByUsers { get; set; }
+
+    public ICollection<MessageEntity> MessagesSent { get; set; } = new List<MessageEntity>();
+    public ICollection<MessageEntity> MessagesReceived { get; set; } = new List<MessageEntity>();
 }

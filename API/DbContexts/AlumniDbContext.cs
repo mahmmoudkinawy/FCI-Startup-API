@@ -9,6 +9,7 @@ public sealed class AlumniDbContext : IdentityDbContext<UserEntity, IdentityRole
     public DbSet<PostEntity> Posts { get; set; }
     public DbSet<ImageEntity> Images { get; set; }
     public DbSet<UserFollowEntity> Followers { get; set; }
+    public DbSet<MessageEntity> Messages { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -36,6 +37,16 @@ public sealed class AlumniDbContext : IdentityDbContext<UserEntity, IdentityRole
             .WithMany(u => u.FollowedByUsers)
             .HasForeignKey(u => u.DestinationUserId)
             .OnDelete(DeleteBehavior.NoAction);
+
+        builder.Entity<MessageEntity>()
+            .HasOne(m => m.Sender)
+            .WithMany(m => m.MessagesSent)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<MessageEntity>()
+            .HasOne(m => m.Recipient)
+            .WithMany(m => m.MessagesReceived)
+            .OnDelete(DeleteBehavior.Restrict);
     }
 
 }
