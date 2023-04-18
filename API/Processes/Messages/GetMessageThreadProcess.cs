@@ -59,7 +59,7 @@ public sealed class GetMessageThreadProcess
                 return null!;
             }
 
-            if(!await _context.Users
+            if (!await _context.Users
                 .AnyAsync(u => u.Id == request.RecipientId, cancellationToken: cancellationToken))
             {
                 return null;
@@ -73,16 +73,16 @@ public sealed class GetMessageThreadProcess
                 .Where
                     (
                         m =>
-                            m.RecipientId == userId &&
-                            m.SenderId == request.RecipientId ||
-                            m.RecipientId == request.RecipientId &&
-                            m.RecipientId == userId
+                            m.Recipient.Id == userId && !m.RecipientDeleted &&
+                            m.Sender.Id == request.RecipientId ||
+                            m.Recipient.Id == request.RecipientId && !m.SenderDeleted &&
+                            m.Sender.Id == userId
                     )
                 .OrderBy(m => m.MessageSentDate)
                 .ToListAsync(cancellationToken: cancellationToken);
 
             var unreadMessages = messages
-                .Where(m => m.DateRead == null && m.RecipientId == userId)
+                .Where(m => m.DateRead == null)
                 .ToList();
 
             if (unreadMessages.Any())
