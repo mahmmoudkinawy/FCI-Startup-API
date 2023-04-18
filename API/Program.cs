@@ -16,7 +16,7 @@ app.UseSwagger();
 
 app.UseSwaggerUI(_ => _.SwaggerEndpoint("/swagger/v1/swagger.json", "v1"));
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection(); // Just for working with WebSockets in development.
 
 app.UseCors(Constants.CorsPolicyName);
 
