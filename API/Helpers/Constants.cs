@@ -14,6 +14,4 @@ public sealed class Constants
         public const string ApiKey = "CloudinarySettings:ApiKey";
         public const string ApiSecret = "CloudinarySettings:ApiSecret";
     }
-
-    public const string UserDefaultImage = "https://imagesforfci.blob.core.windows.net/imagesforfcistartupbackend/default.png";
 }

@@ -62,7 +62,7 @@ public sealed class GetMessageThreadProcess
             if (!await _context.Users
                 .AnyAsync(u => u.Id == request.RecipientId, cancellationToken: cancellationToken))
             {
-                return null;
+                return null!;
             }
 
             var messages = await _context.Messages
@@ -95,7 +95,7 @@ public sealed class GetMessageThreadProcess
                 await _context.SaveChangesAsync(cancellationToken);
             }
 
-            return _mapper.Map<IReadOnlyList<Response>>(unreadMessages);
+            return _mapper.Map<IReadOnlyList<Response>>(messages);
         }
 
     }

@@ -1,6 +1,4 @@
-﻿using Swashbuckle.AspNetCore.SwaggerGen;
-
-namespace API.Extensions;
+﻿namespace API.Extensions;
 public static class SwaggerServiceExtensions
 {
     public static IServiceCollection AddSwaggerServices(this IServiceCollection services)
@@ -18,16 +16,23 @@ public static class SwaggerServiceExtensions
 
         services.AddSwaggerGen(opts =>
         {
-            opts.CustomOperationIds(apiDesc => apiDesc.TryGetMethodInfo(out MethodInfo methodInfo) ? methodInfo.Name : null);
-
-            opts.CustomSchemaIds(opts => opts.FullName?.Replace("+", "."));
-
-            opts.DocInclusionPredicate((docName, apiDesc) => true);
-
             var xmlCommentsFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
             var xmlCommentsFullPath = Path.Combine(AppContext.BaseDirectory, xmlCommentsFile);
 
             opts.IncludeXmlComments(xmlCommentsFullPath);
+
+            opts.AddSignalRSwaggerGen(_ =>
+            {
+                _.UseHubXmlCommentsSummaryAsTagDescription =  true;
+                _.UseHubXmlCommentsSummaryAsTag = true;
+                _.UseXmlComments(xmlCommentsFullPath);
+            });
+
+            //opts.CustomOperationIds(apiDesc => apiDesc.TryGetMethodInfo(out MethodInfo methodInfo) ? methodInfo.Name : null);
+
+            opts.CustomSchemaIds(opts => opts.FullName?.Replace("+", "."));
+
+            //opts.DocInclusionPredicate((docName, apiDesc) => true);
 
             opts.AddSecurityDefinition("AlunmiApiBearerAuth", new OpenApiSecurityScheme()
             {

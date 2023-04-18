@@ -77,7 +77,7 @@ public sealed class UserLoginProcess
             return Result<Response>.Success(new Response
             {
                 FullName = $"{user.FirstName} {user.LastName}",
-                ImageUrl = image?.ImageUrl ?? Constants.UserDefaultImage,
+                ImageUrl = image?.ImageUrl ?? null,
                 Token = _tokenService.CreateToken(user)
             });
         }

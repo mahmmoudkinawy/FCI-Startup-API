@@ -109,7 +109,7 @@ public sealed class UserRegisterProcess
             return Result<Response>.Success(new Response
             {
                 FullName = $"{user.FirstName} {user.LastName}",
-                ImageUrl = Constants.UserDefaultImage,
+                ImageUrl = null,
                 Token = _tokenService.CreateToken(user)
             });
         }
