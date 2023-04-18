@@ -2,6 +2,7 @@
 global using API.Entities;
 global using API.Extensions;
 global using API.Helpers;
+global using API.Hubs;
 global using API.Middleware;
 global using API.Processes.Account;
 global using API.Processes.Followers;
@@ -23,6 +24,7 @@ global using Microsoft.AspNetCore.Authorization;
 global using Microsoft.AspNetCore.Identity;
 global using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 global using Microsoft.AspNetCore.Mvc;
+global using Microsoft.AspNetCore.SignalR;
 global using Microsoft.EntityFrameworkCore;
 global using Microsoft.IdentityModel.Tokens;
 global using Microsoft.OpenApi.Models;

@@ -5,14 +5,15 @@ public sealed class TokenService : ITokenService
 
     public TokenService(IConfiguration config)
     {
-        _key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config[Constants.TokenKey]));
+        _key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config[Constants.TokenKey]!));
     }
 
     public string CreateToken(UserEntity user)
     {
         var claims = new List<Claim>()
         {
-            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString())
+            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+            new Claim(ClaimTypes.Name, $"{user.FirstName} {user.LastName}")
         };
 
         var creds = new SigningCredentials(_key, SecurityAlgorithms.HmacSha256Signature);

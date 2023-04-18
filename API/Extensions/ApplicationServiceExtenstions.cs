@@ -5,6 +5,8 @@ public static class ApplicationServiceExtensions
         this IServiceCollection services,
         IConfiguration config)
     {
+        services.AddSignalR();
+
         services.AddControllers()
             .AddFluentValidation(_ => _.RegisterValidatorsFromAssemblyContaining<Program>());
 

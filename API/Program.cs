@@ -26,6 +26,8 @@ app.UseAuthorization();
 
 app.MapControllers();
 
+app.MapHub<PresenceHub>("hubs/presence");
+
 using var scope = app.Services.CreateScope();
 var dbContext = scope.ServiceProvider.GetRequiredService<AlumniDbContext>();
 var userManager = scope.ServiceProvider.GetRequiredService<UserManager<UserEntity>>();
