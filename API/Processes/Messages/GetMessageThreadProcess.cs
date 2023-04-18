@@ -10,10 +10,10 @@ public sealed class GetMessageThreadProcess
     {
         public Guid Id { get; set; }
         public Guid SenderId { get; set; }
-        public string SenderUsername { get; set; }
+        public string SenderName { get; set; }
         public string SenderImageUrl { get; set; }
         public Guid RecipientId { get; set; }
-        public string RecipientUsername { get; set; }
+        public string RecipientName { get; set; }
         public string RecipientImageUrl { get; set; }
         public string Content { get; set; }
         public DateTime? DateRead { get; set; }
