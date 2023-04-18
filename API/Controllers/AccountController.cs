@@ -88,9 +88,4 @@ public class AccountController : ControllerBase
         return Ok(response.Value);
     }
 
-    /// <summary>
-    /// An endpoint the shows you what you can do with this controller.
-    /// </summary>
-    [HttpOptions]
-    public void GetOptions() => Response.Headers.Add("Allowed", "POST");
 }

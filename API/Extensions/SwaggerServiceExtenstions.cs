@@ -1,37 +1,42 @@
-﻿namespace API.Extensions;
+﻿using Swashbuckle.AspNetCore.SwaggerGen;
+
+namespace API.Extensions;
 public static class SwaggerServiceExtensions
 {
     public static IServiceCollection AddSwaggerServices(this IServiceCollection services)
     {
         services.AddEndpointsApiExplorer();
 
-        services.AddApiVersioning(_ =>
+        services.AddApiVersioning(opts =>
         {
-            _.AssumeDefaultVersionWhenUnspecified = true;
-            _.ReportApiVersions = true;
-            _.DefaultApiVersion = new ApiVersion(1, 0);
+            opts.AssumeDefaultVersionWhenUnspecified = true;
+            opts.ReportApiVersions = true;
+            opts.DefaultApiVersion = new ApiVersion(1, 0);
         });
 
-        services.AddVersionedApiExplorer(_ => _.GroupNameFormat = "'v'VVV");
+        services.AddVersionedApiExplorer(opts => opts.GroupNameFormat = "'v'VVV");
 
-
-        services.AddSwaggerGen(_ =>
+        services.AddSwaggerGen(opts =>
         {
-            _.CustomSchemaIds(_ => _.FullName?.Replace("+", "."));
+            opts.CustomOperationIds(apiDesc => apiDesc.TryGetMethodInfo(out MethodInfo methodInfo) ? methodInfo.Name : null);
+
+            opts.CustomSchemaIds(opts => opts.FullName?.Replace("+", "."));
+
+            opts.DocInclusionPredicate((docName, apiDesc) => true);
 
             var xmlCommentsFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
             var xmlCommentsFullPath = Path.Combine(AppContext.BaseDirectory, xmlCommentsFile);
 
-            _.IncludeXmlComments(xmlCommentsFullPath);
+            opts.IncludeXmlComments(xmlCommentsFullPath);
 
-            _.AddSecurityDefinition("AlunmiApiBearerAuth", new OpenApiSecurityScheme()
+            opts.AddSecurityDefinition("AlunmiApiBearerAuth", new OpenApiSecurityScheme()
             {
                 Type = SecuritySchemeType.Http,
                 Scheme = "Bearer",
                 Description = "Input a valid token to access this API"
             });
 
-            _.AddSecurityRequirement(new OpenApiSecurityRequirement
+            opts.AddSecurityRequirement(new OpenApiSecurityRequirement
             {
                 {
                     new OpenApiSecurityScheme

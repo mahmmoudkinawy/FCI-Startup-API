@@ -144,10 +144,4 @@ public sealed class UsersController : ControllerBase
         return NoContent();
     }
 
-
-    /// <summary>
-    /// An endpoint the shows you what you can do with this controller.
-    /// </summary>
-    [HttpOptions]
-    public void GetOptions() => Response.Headers.Add("Allow", "GET,POST,PUT");
 }
