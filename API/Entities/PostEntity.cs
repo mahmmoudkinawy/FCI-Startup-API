@@ -9,4 +9,6 @@ public sealed class PostEntity
 
     public Guid UserId { get; set; }
     public UserEntity User { get; set; }
+
+    public ICollection<ImageEntity> Images { get; set; } = new List<ImageEntity>();
 }

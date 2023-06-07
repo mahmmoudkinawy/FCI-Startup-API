@@ -4,6 +4,7 @@ using API.DbContexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace API.DbContexts.Migrations
 {
     [DbContext(typeof(AlumniDbContext))]
-    partial class AlumniDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230607145716_AddedGroupsAndConnectionsTableToDb")]
+    partial class AddedGroupsAndConnectionsTableToDb
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -52,24 +55,16 @@ namespace API.DbContexts.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime?>("CreatedAt")
-                        .HasColumnType("datetime2");
-
                     b.Property<string>("ImageUrl")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsMain")
                         .HasColumnType("bit");
 
-                    b.Property<Guid?>("PostId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("UserId")
+                    b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("PostId");
 
                     b.HasIndex("UserId");
 
@@ -384,15 +379,11 @@ namespace API.DbContexts.Migrations
 
             modelBuilder.Entity("API.Entities.ImageEntity", b =>
                 {
-                    b.HasOne("API.Entities.PostEntity", "Post")
-                        .WithMany("Images")
-                        .HasForeignKey("PostId");
-
                     b.HasOne("API.Entities.UserEntity", "User")
                         .WithMany("Images")
-                        .HasForeignKey("UserId");
-
-                    b.Navigation("Post");
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("User");
                 });
@@ -500,11 +491,6 @@ namespace API.DbContexts.Migrations
             modelBuilder.Entity("API.Entities.GroupEntity", b =>
                 {
                     b.Navigation("Connections");
-                });
-
-            modelBuilder.Entity("API.Entities.PostEntity", b =>
-                {
-                    b.Navigation("Images");
                 });
 
             modelBuilder.Entity("API.Entities.UserEntity", b =>

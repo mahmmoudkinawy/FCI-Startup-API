@@ -13,6 +13,7 @@ public sealed class GetPostByIdProcess
         public DateTime CreatedAt { get; init; }
         public DateTime UpdatedAt { get; set; }
         public string Content { get; set; }
+        public string PostImageUrl { get; set; }
         public Guid UserId { get; set; }
     }
 
@@ -20,7 +21,8 @@ public sealed class GetPostByIdProcess
     {
         public Mapper()
         {
-            CreateMap<PostEntity, Response>();
+            CreateMap<PostEntity, Response>()
+                .ForMember(p => p.PostImageUrl, dest => dest.MapFrom(src => src.Images.OrderByDescending(x => x.CreatedAt).FirstOrDefault()!.ImageUrl));
         }
     }
 
@@ -41,9 +43,9 @@ public sealed class GetPostByIdProcess
         {
             ArgumentNullException.ThrowIfNull(request.PostId);
 
-            var postFromDb = await _context.Posts.FindAsync(
-                new object?[] { request.PostId },
-                cancellationToken: cancellationToken);
+            var postFromDb = await _context.Posts
+                .Include(i => i.Images)
+                .FirstOrDefaultAsync(p => p.Id == request.PostId, cancellationToken: cancellationToken);
 
             if(postFromDb is null)
             {

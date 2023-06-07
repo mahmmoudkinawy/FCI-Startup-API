@@ -5,6 +5,7 @@ public sealed class UpdatePostProcess
     public sealed class Request : IRequest<Result<Response>>
     {
         public string Content { get; set; }
+        public IFormFile? Image { get; set; }
     }
 
     public sealed class Response
@@ -33,6 +34,36 @@ public sealed class UpdatePostProcess
                 .MinimumLength(3)
                 .MaximumLength(50000)
                 .NotEmpty();
+
+            RuleFor(_ => _.Image)
+                .Cascade(CascadeMode.StopOnFirstFailure)
+                .Must(BeAValidImage)
+                .When(_ => _.Image != null)
+                .WithMessage("Invalid image format or size.");
+        }
+
+        private bool BeAValidImage(IFormFile file)
+        {
+            if (file == null)
+            {
+                return true;
+            }
+
+            var allowedExtensions = new[] { ".jpg", ".jpeg", ".gif", ".png" };
+            var maxFileSizeBytes = 10 * 1024 * 1024;
+
+            var extension = Path.GetExtension(file.FileName);
+            if (!allowedExtensions.Contains(extension.ToLower()))
+            {
+                return false;
+            }
+
+            if (file.Length > maxFileSizeBytes)
+            {
+                return false;
+            }
+
+            return true;
         }
     }
 
@@ -41,11 +72,13 @@ public sealed class UpdatePostProcess
         private readonly AlumniDbContext _context;
         private readonly IMapper _mapper;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IPhotoService _photoService;
 
         public Handler(
             AlumniDbContext context,
+            IHttpContextAccessor httpContextAccessor,
             IMapper mapper,
-            IHttpContextAccessor httpContextAccessor)
+            IPhotoService photoService)
         {
             _context = context ??
                 throw new ArgumentNullException(nameof(context));
@@ -53,6 +86,8 @@ public sealed class UpdatePostProcess
                 throw new ArgumentNullException(nameof(mapper));
             _httpContextAccessor = httpContextAccessor ??
                 throw new ArgumentNullException(nameof(httpContextAccessor));
+            _photoService = photoService ??
+                throw new ArgumentNullException(nameof(mapper));
         }
 
         public async Task<Result<Response>> Handle(Request request, CancellationToken cancellationToken)
@@ -79,6 +114,21 @@ public sealed class UpdatePostProcess
             }
 
             _mapper.Map(request, postFromDb);
+
+            if (request.Image is not null)
+            {
+                var imageUploadResult = await _photoService.UploadPhotoAsync(request.Image);
+
+                var imageToCreate = new ImageEntity
+                {
+                    Id = Guid.NewGuid(),
+                    PostId = postFromDb.Id,
+                    CreatedAt = DateTime.UtcNow,
+                    ImageUrl = imageUploadResult
+                };
+
+                _context.Images.Add(imageToCreate);
+            }
 
             if (await _context.SaveChangesAsync(cancellationToken) > 0)
             {

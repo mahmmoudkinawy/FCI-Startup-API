@@ -15,6 +15,7 @@ public sealed class GetAllPostsProcess
         public DateTime CreatedAt { get; init; }
         public DateTime UpdatedAt { get; set; }
         public string Content { get; set; }
+        public string PostImageUrl { get; set; }
         public Guid OwnerId { get; set; }
         public string OwnerName { get; set; }
         public string OwnerImageUrl { get; set; }
@@ -27,7 +28,8 @@ public sealed class GetAllPostsProcess
             CreateMap<PostEntity, Response>()
                 .ForMember(p => p.OwnerId, dest => dest.MapFrom(src => src.User.Id))
                 .ForMember(p => p.OwnerName, dest => dest.MapFrom(src => $"{src.User.FirstName} {src.User.LastName}"))
-                .ForMember(p => p.OwnerImageUrl, dest => dest.MapFrom(src => src.User.Images.FirstOrDefault(i => i.IsMain)!.ImageUrl));
+                .ForMember(p => p.OwnerImageUrl, dest => dest.MapFrom(src => src.User.Images.FirstOrDefault(i => i.IsMain)!.ImageUrl))
+                .ForMember(p => p.PostImageUrl, dest => dest.MapFrom(src => src.Images.OrderByDescending(x => x.CreatedAt).FirstOrDefault()!.ImageUrl));
         }
     }
 

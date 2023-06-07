@@ -71,7 +71,8 @@ public sealed class UploadImageProcess
                 Id = Guid.NewGuid(),
                 IsMain = user.Images.Count == 0,
                 UserId = userId,
-                ImageUrl = imageUploadResult
+                ImageUrl = imageUploadResult,
+                CreatedAt = DateTime.UtcNow
             };
 
             _context.Images.Add(image);

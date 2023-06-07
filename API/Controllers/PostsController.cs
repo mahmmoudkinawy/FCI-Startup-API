@@ -91,19 +91,25 @@ public sealed class PostsController : ControllerBase
     /// Sample request:
     ///
     ///     POST /posts/
-    ///     {
-    ///       "content": "string"
-    ///     }
+    ///     
+    ///         Content-Type: multipart/form-data;
+    ///         Content-Disposition: form-data; name="content"
+    ///
+    ///         This is the content of the post.
+    ///         Content-Disposition: form-data; name="image"; filename="example.jpg"
+    ///         Content-Type: image/jpeg
+    ///     
     /// </remarks>
     /// <response code="201">Returns redirection to the post that got created.</response>
     /// <response code="400">There exist validation errors.</response>
     /// <response code="401">User does not exist.</response>
     [HttpPost]
+    [Consumes("multipart/form-data")]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> CreatePost(
-        [FromBody] CreatePostProcess.Request request,
+        [FromForm] CreatePostProcess.Request request,
         CancellationToken cancellationToken)
     {
         var response = await _mediator.Send(
@@ -115,9 +121,7 @@ public sealed class PostsController : ControllerBase
             return BadRequest(response.Errors);
         }
 
-        return CreatedAtRoute(nameof(GetPost),
-            new { postId = response.Value.Id },
-            response.Value);
+        return NoContent();
     }
 
     /// <summary>
@@ -129,23 +133,28 @@ public sealed class PostsController : ControllerBase
     /// <remarks>
     /// Sample request:
     ///
-    ///     PUT /posts/b87a6d86-958d-4647-cc27-08db165fc0f0
-    ///     {
-    ///       "content": "updated string"
-    ///     }
+    ///     POST /posts/
+    ///     
+    ///         Content-Type: multipart/form-data;
+    ///         Content-Disposition: form-data; name="content"
+    ///
+    ///         This is the content of the post updated.
+    ///         Content-Disposition: form-data; name="image"; filename="example2.jpg"
+    ///         Content-Type: image/jpeg
+    ///     
     /// </remarks>
     /// <response code="200">Returns updated post.</response>
     /// <response code="400">There exist validation errors.</response>
     /// <response code="401">User does not exist.</response>
     /// <response code="404">Post does not exist.</response>
-    [HttpPut("{postId}")]
+    [HttpPut("{postId:guid}")]
+    [Consumes("multipart/form-data")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> DeletePost(
-        [FromRoute] Guid postId,
-        [FromBody] UpdatePostProcess.Request request,
+    public async Task<IActionResult> UpdatePost(
+        [FromForm] UpdatePostProcess.Request request,
         CancellationToken cancellationToken)
     {
         var response = await _mediator.Send(

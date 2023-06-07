@@ -29,6 +29,7 @@ public sealed class DeletePostProcess
             var userId = _httpContextAccessor.HttpContext.User.GetUserById();
 
             var post = await _context.Posts
+                .Include(i => i.Images)
                 .FirstOrDefaultAsync(p =>
                     p.Id == request.PostId &&
                     p.UserId == userId, cancellationToken: cancellationToken);
@@ -39,6 +40,12 @@ public sealed class DeletePostProcess
             }
 
             _context.Posts.Remove(post);
+
+            if (post.Images.Any())
+            {
+                var images = post.Images.ToList();
+                _context.Images.RemoveRange(images);
+            }
 
             if (await _context.SaveChangesAsync(cancellationToken) > 0)
             {

@@ -10,6 +10,8 @@ public static class ApplicationServiceExtensions
         services.AddControllers()
             .AddFluentValidation(_ => _.RegisterValidatorsFromAssemblyContaining<Program>());
 
+        services.AddSingleton<PresenceTracker>();
+
         services.AddScoped<ITokenService, TokenService>();
 
         services.AddScoped<IPhotoService, PhotoService>();
