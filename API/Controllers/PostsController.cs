@@ -86,7 +86,7 @@ public sealed class PostsController : ControllerBase
     /// </summary>
     /// <param name="request"></param>
     /// <param name="cancellationToken"></param>
-    /// <returns>Returns the redirection with the matches route in the header</returns>
+    /// <returns>Returns no content.</returns>
     /// <remarks>
     /// Sample request:
     ///
@@ -100,7 +100,7 @@ public sealed class PostsController : ControllerBase
     ///         Content-Type: image/jpeg
     ///     
     /// </remarks>
-    /// <response code="201">Returns redirection to the post that got created.</response>
+    /// <response code="201">Returns no content.</response>
     /// <response code="400">There exist validation errors.</response>
     /// <response code="401">User does not exist.</response>
     [HttpPost]
@@ -200,6 +200,41 @@ public sealed class PostsController : ControllerBase
         if (!response.IsSuccess)
         {
             return NotFound();
+        }
+
+        return NoContent();
+    }
+
+    /// <summary>
+    /// endpoint for like a post by post id.
+    /// </summary>
+    /// <param name="request"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns>Returns no content</returns>
+    /// <remarks>
+    /// Sample request:
+    ///
+    ///     POST /posts/db9504d4-78bc-4ca4-9fb4-994babc74354/like
+    /// </remarks>
+    /// <response code="201">Returns no content.</response>
+    /// <response code="400">There exist validation errors.</response>
+    /// <response code="401">User does not exist.</response>
+    /// <response code="404">Post with the given Id does not exist.</response>
+    [HttpPost("{postId:guid}/like")]
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> CreateLikeForPost(
+        CancellationToken cancellationToken)
+    {
+        var response = await _mediator.Send(
+            new CreateLikeForPostProcess.Request { },
+            cancellationToken);
+
+        if (!response.IsSuccess)
+        {
+            return BadRequest(response.Errors);
         }
 
         return NoContent();

@@ -13,7 +13,6 @@ public sealed class UsersController : ControllerBase
             throw new ArgumentNullException(nameof(mediator));
     }
 
-
     /// <summary>
     /// end point for getting all the users.
     /// </summary>
@@ -80,6 +79,37 @@ public sealed class UsersController : ControllerBase
         var response = await _mediator.Send(
             new CurrentUserProcess.Request { },
             cancellationToken);
+
+        return Ok(response);
+    }
+
+    /// <summary>
+    /// end point for getting the current logged in user likes.
+    /// </summary>
+    /// <param name="request"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns>Returns the url for the created image</returns>
+    /// <response code="200">Returns current logged in user likes.</response>
+    /// <response code="401">User does not exist.</response>
+    [HttpGet("current-user-likes")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<IActionResult> GetCurrentUserLikes(
+        [FromQuery] PostsParams postsParams,
+        CancellationToken cancellationToken)
+    {
+        var response = await _mediator.Send(
+            new GetCurrentUserLikesProcess.Request
+            {
+                Keyword = postsParams.Keyword,
+                PageNumber = postsParams.PageNumber,
+                PageSize = postsParams.PageSize,
+            }, cancellationToken);
+
+        Response.AddPaginationHeader(response.CurrentPage,
+            response.PageSize,
+            response.TotalPages,
+            response.TotalCount);
 
         return Ok(response);
     }

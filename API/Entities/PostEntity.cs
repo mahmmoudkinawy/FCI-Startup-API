@@ -11,4 +11,5 @@ public sealed class PostEntity
     public UserEntity User { get; set; }
 
     public ICollection<ImageEntity> Images { get; set; } = new List<ImageEntity>();
+    public ICollection<LikeEntity> Likes { get; set; } = new List<LikeEntity>();
 }
