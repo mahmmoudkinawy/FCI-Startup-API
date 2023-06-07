@@ -237,7 +237,7 @@ public sealed class PostsController : ControllerBase
             return BadRequest(response.Errors);
         }
 
-        return NoContent();
+        return Ok(response.Value);
     }
 
 }

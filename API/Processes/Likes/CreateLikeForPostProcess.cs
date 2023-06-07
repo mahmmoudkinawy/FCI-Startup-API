@@ -3,7 +3,10 @@ public sealed class CreateLikeForPostProcess
 {
     public sealed class Request : IRequest<Result<Response>> { }
 
-    public sealed class Response { }
+    public sealed class Response
+    {
+        public string Message { get; set; }
+    }
 
     public sealed class Handler : IRequestHandler<Request, Result<Response>>
     {
@@ -50,7 +53,10 @@ public sealed class CreateLikeForPostProcess
                 _context.Likes.Remove(userLike);
                 await _context.SaveChangesAsync(cancellationToken);
 
-                return Result<Response>.Success(new Response { });
+                return Result<Response>.Success(new Response
+                {
+                    Message = "Your like has been taken off successfully."
+                });
             }
 
             var like = new LikeEntity
@@ -65,7 +71,10 @@ public sealed class CreateLikeForPostProcess
 
             if (await _context.SaveChangesAsync(cancellationToken) > 0)
             {
-                return Result<Response>.Success(new Response { });
+                return Result<Response>.Success(new Response
+                {
+                    Message = "Your appreciation has been successfully acknowledged."
+                });
             }
 
             return Result<Response>.Failure(new List<string>
