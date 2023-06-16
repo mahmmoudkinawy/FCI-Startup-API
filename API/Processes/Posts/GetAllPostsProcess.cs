@@ -16,10 +16,12 @@ public sealed class GetAllPostsProcess
         public DateTime UpdatedAt { get; set; }
         public string Content { get; set; }
         public string PostImageUrl { get; set; }
+        public bool IsLikedByCurrentUser { get; set; }
         public Guid OwnerId { get; set; }
         public string OwnerName { get; set; }
         public string OwnerImageUrl { get; set; }
     }
+
 
     public sealed class Mapper : Profile
     {
@@ -37,32 +39,46 @@ public sealed class GetAllPostsProcess
     {
         private readonly AlumniDbContext _context;
         private readonly IMapper _mapper;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public Handler(AlumniDbContext context, IMapper mapper)
+        public Handler(AlumniDbContext context, IMapper mapper, IHttpContextAccessor httpContextAccessor)
         {
             _context = context ??
                 throw new ArgumentNullException(nameof(context));
             _mapper = mapper ??
                 throw new ArgumentNullException(nameof(mapper));
+            _httpContextAccessor = httpContextAccessor ??
+                throw new ArgumentNullException(nameof(httpContextAccessor));
         }
 
-        public async Task<PagedList<Response>> Handle(
-            Request request,
-            CancellationToken cancellationToken)
+        public async Task<PagedList<Response>> Handle(Request request, CancellationToken cancellationToken)
         {
-            var query = _context.Posts.AsQueryable();
+            var postsQuery = _context.Posts.AsQueryable();
 
             if (!string.IsNullOrWhiteSpace(request.Keyword))
             {
-                // I know the above code is very bad and ToLower() will make it slow!
-                // But it's only small api for graduation.
-                query = query.Where(_ => _.Content.ToLower().Contains(request.Keyword));
+                postsQuery = postsQuery.Where(_ => _.Content.ToLower().Contains(request.Keyword));
             }
 
-            return await PagedList<Response>.CreateAsync(
-                query.ProjectTo<Response>(_mapper.ConfigurationProvider).AsNoTracking(),
+            var currentUserId = _httpContextAccessor.HttpContext.User.GetUserById();
+
+            var likedPostIdsByCurrentUser = await _context.Likes
+                .Where(l => l.UserId == currentUserId)
+                .Select(l => l.PostId)
+                .ToListAsync();
+
+            var responses = await PagedList<Response>.CreateAsync(
+                postsQuery.ProjectTo<Response>(_mapper.ConfigurationProvider),
                 request.PageNumber,
                 request.PageSize);
+
+            foreach (var response in responses)
+            {
+                response.IsLikedByCurrentUser = likedPostIdsByCurrentUser.Contains(response.Id);
+            }
+
+            return responses;
         }
+
     }
 }
