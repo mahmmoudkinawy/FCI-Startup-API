@@ -1,5 +1,4 @@
 ﻿namespace API.Processes.Posts;
-
 public sealed class GetPostByIdProcess
 {
     public sealed class Request : IRequest<Result<Response>>

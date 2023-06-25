@@ -1,5 +1,4 @@
 ﻿namespace API.Processes.Posts;
-
 public sealed class GetAllPostsProcess
 {
     public sealed class Request : IRequest<PagedList<Response>>
@@ -21,7 +20,6 @@ public sealed class GetAllPostsProcess
         public string OwnerName { get; set; }
         public string OwnerImageUrl { get; set; }
     }
-
 
     public sealed class Mapper : Profile
     {
@@ -53,7 +51,8 @@ public sealed class GetAllPostsProcess
 
         public async Task<PagedList<Response>> Handle(Request request, CancellationToken cancellationToken)
         {
-            var postsQuery = _context.Posts.AsQueryable();
+            var postsQuery = _context.Posts
+                .AsQueryable();
 
             if (!string.IsNullOrWhiteSpace(request.Keyword))
             {

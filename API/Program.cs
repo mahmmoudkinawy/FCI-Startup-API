@@ -28,6 +28,7 @@ app.MapControllers();
 
 app.MapHub<PresenceHub>("hubs/presence");
 app.MapHub<MessageHub>("hubs/message");
+app.MapHub<CommentHub>("hubs/comment");
 
 using var scope = app.Services.CreateScope();
 var dbContext = scope.ServiceProvider.GetRequiredService<AlumniDbContext>();

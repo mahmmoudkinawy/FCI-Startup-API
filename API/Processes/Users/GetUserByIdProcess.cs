@@ -24,6 +24,7 @@ public sealed class GetUserByIdProcess
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
         public string Content { get; set; }
+        public string ImageUrl { get; set; }
     }
 
     public sealed class Mapper : Profile
@@ -34,7 +35,8 @@ public sealed class GetUserByIdProcess
                 .ForMember(dest => dest.Age, opt => opt.MapFrom(u => u.DateOfBirth.CalculateAge()))
                 .ForMember(dest => dest.FullName, opt => opt.MapFrom(u => $"{u.FirstName} {u.LastName}"))
                 .ForMember(dest => dest.ImageUrl, opt => opt.MapFrom(o => o.Images.FirstOrDefault(p => p.IsMain).ImageUrl));
-            CreateMap<PostEntity, PostDto>();
+            CreateMap<PostEntity, PostDto>()
+                .ForMember(dest => dest.ImageUrl, opt => opt.MapFrom(i => i.Images.MaxBy(pi => pi.CreatedAt).ImageUrl));
         }
     }
 
@@ -64,6 +66,7 @@ public sealed class GetUserByIdProcess
             var user = await _userManager.Users
                 .Include(i => i.Images)
                 .Include(i => i.Posts)
+                    .ThenInclude(i => i.Images)
                 .FirstOrDefaultAsync(u => u.Id == request.UserId, cancellationToken: cancellationToken);
 
             if (user is null)

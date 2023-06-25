@@ -13,10 +13,23 @@ public sealed class AlumniDbContext : IdentityDbContext<UserEntity, IdentityRole
     public DbSet<GroupEntity> Groups { get; set; }
     public DbSet<ConnectionEntity> Connections { get; set; }
     public DbSet<LikeEntity> Likes { get; set; }
+    public DbSet<CommentEntity> Comments { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
+
+        builder.Entity<CommentEntity>()
+            .HasOne(c => c.Post)
+            .WithMany(p => p.Comments)
+            .HasForeignKey(c => c.PostId)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        builder.Entity<CommentEntity>()
+            .HasOne(c => c.Owner)
+            .WithMany()
+            .HasForeignKey(c => c.OwnerId)
+            .OnDelete(DeleteBehavior.NoAction);
 
         builder.Entity<LikeEntity>()
             .HasOne(u => u.User)

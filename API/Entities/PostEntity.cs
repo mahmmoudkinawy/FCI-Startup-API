@@ -12,4 +12,5 @@ public sealed class PostEntity
 
     public ICollection<ImageEntity> Images { get; set; } = new List<ImageEntity>();
     public ICollection<LikeEntity> Likes { get; set; } = new List<LikeEntity>();
+    public ICollection<CommentEntity> Comments { get; set; } = new List<CommentEntity>();
 }

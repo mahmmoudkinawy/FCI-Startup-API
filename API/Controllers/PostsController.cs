@@ -82,6 +82,46 @@ public sealed class PostsController : ControllerBase
     }
 
     /// <summary>
+    /// endpoint for creating a comment by post id - only for testing
+    /// </summary>
+    [HttpPost("comments/{postId}")]
+    public async Task<IActionResult> CreateComment(
+       Guid postId,
+       CancellationToken cancellationToken)
+    {
+        var response = await _mediator.Send(
+            new CreateCommentForPostProcess.Request
+            {
+                PostId = postId,
+                Content = "Hello Man"
+            }, cancellationToken);
+
+        if (!response.IsSuccess)
+        {
+            return BadRequest(response.Errors);
+        }
+
+        return Ok(response.Value);
+    }
+
+    /// <summary>
+    /// endpoint for loading all comments for post by post id - only for testing
+    /// </summary>
+    [HttpGet("comments/{postId}")]
+    public async Task<IActionResult> GetCommentsForPost(
+       Guid postId,
+       CancellationToken cancellationToken)
+    {
+        var response = await _mediator.Send(
+            new GetCommentsByPostIdProcess.Request
+            {
+                PostId = postId
+            }, cancellationToken);
+
+        return Ok(response);
+    }
+
+    /// <summary>
     /// endpoint for creating a post.
     /// </summary>
     /// <param name="request"></param>
