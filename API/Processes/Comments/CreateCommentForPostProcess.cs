@@ -3,7 +3,8 @@ public sealed class CreateCommentForPostProcess
 {
     public sealed class Request : IRequest<Result<Response>>
     {
-        public Guid PostId { get; set; }
+        [JsonIgnore]
+        public Guid? PostId { get; set; }
         public string Content { get; set; }
     }
 
@@ -58,8 +59,14 @@ public sealed class CreateCommentForPostProcess
         {
             var currentUserId = _httpContextAccessor.HttpContext.User.GetUserById();
 
+            var idValueFromRoute = _httpContextAccessor.HttpContext?.GetRouteValue("postId");
+
+            var postId = Guid.Parse(idValueFromRoute.ToString());
+
+            request.PostId ??= postId;
+
             var post = await _context.Posts
-                .FindAsync(new object?[] { request.PostId }, cancellationToken: cancellationToken);
+                .FindAsync(new object?[] { postId }, cancellationToken: cancellationToken);
 
             if (post is null)
             {

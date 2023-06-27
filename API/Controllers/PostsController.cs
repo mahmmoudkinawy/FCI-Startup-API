@@ -86,15 +86,12 @@ public sealed class PostsController : ControllerBase
     /// </summary>
     [HttpPost("comments/{postId}")]
     public async Task<IActionResult> CreateComment(
-       Guid postId,
+       [FromBody] CreateCommentForPostProcess.Request request,
        CancellationToken cancellationToken)
     {
         var response = await _mediator.Send(
-            new CreateCommentForPostProcess.Request
-            {
-                PostId = postId,
-                Content = "Hello Man"
-            }, cancellationToken);
+            request, 
+            cancellationToken);
 
         if (!response.IsSuccess)
         {

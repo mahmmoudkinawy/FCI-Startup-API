@@ -92,11 +92,9 @@ public sealed class UpdatePostProcess
 
         public async Task<Result<Response>> Handle(Request request, CancellationToken cancellationToken)
         {
-            var requestRouteQuery = _httpContextAccessor.HttpContext?.GetRouteData();
-
             var userId = _httpContextAccessor.HttpContext.User.GetUserById();
 
-            var idValueFromRoute = requestRouteQuery!.Values["postId"];
+            var idValueFromRoute = _httpContextAccessor.HttpContext?.GetRouteValue("postId");
 
             var postId = Guid.Parse(idValueFromRoute.ToString());
 
