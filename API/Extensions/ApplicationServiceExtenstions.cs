@@ -16,6 +16,8 @@ public static class ApplicationServiceExtensions
 
         services.AddScoped<IPhotoService, PhotoService>();
 
+        services.AddTransient<IEmailSender, EmailSender>();
+
         services.AddMediatR(_ => _.RegisterServicesFromAssemblyContaining<Program>());
 
         services.AddAutoMapper(Assembly.GetExecutingAssembly());

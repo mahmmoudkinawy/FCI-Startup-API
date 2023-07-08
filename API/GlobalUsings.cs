@@ -37,3 +37,7 @@ global using System.Security.Claims;
 global using System.Text;
 global using System.Text.Json;
 global using System.Text.Json.Serialization;
+global using RestSharp;
+global using RestSharp.Authenticators;
+global using Microsoft.AspNetCore.Mvc.Controllers;
+global using Microsoft.AspNetCore.Mvc.Routing;

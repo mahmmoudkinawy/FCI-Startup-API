@@ -14,6 +14,43 @@ public class AccountController : ControllerBase
             throw new ArgumentNullException(nameof(mediator));
     }
 
+    [ApiExplorerSettings(IgnoreApi = true)]
+    [AllowAnonymous]
+    [HttpPost("reset-password")]
+    public async Task<IActionResult> ResetPassword(
+        [FromBody] ResetPasswordProcess.Request request,
+        CancellationToken cancellationToken)
+    {
+        var response = await _mediator.Send(
+            request,
+            cancellationToken);
+
+        if (!response.IsSuccess)
+        {
+            return BadRequest(response.Errors);
+        }
+
+        return NoContent();
+    }
+
+    [AllowAnonymous]
+    [HttpPost("forgot-password")]
+    public async Task<IActionResult> ForgotPassword(
+        [FromBody] ForgotPasswordProcess.Request request,
+        CancellationToken cancellationToken)
+    {
+        var response = await _mediator.Send(
+            request,
+            cancellationToken);
+
+        if (!response.IsSuccess)
+        {
+            return BadRequest(response.Errors);
+        }
+
+        return NoContent();
+    }
+
     /// <summary>
     /// login endpoint to authenticate the user
     /// </summary>

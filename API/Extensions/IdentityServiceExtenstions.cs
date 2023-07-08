@@ -8,12 +8,16 @@ public static class IdentityServiceExtensions
         services.AddIdentityCore<UserEntity>(_ =>
         {
             _.Password.RequireNonAlphanumeric = false;
+            _.Password.RequireDigit = false;
+            _.Password.RequireLowercase = false;
+            _.Password.RequireUppercase = false;
             _.SignIn.RequireConfirmedAccount = false;
             _.SignIn.RequireConfirmedPhoneNumber = false;
         })
             .AddUserManager<UserManager<UserEntity>>()
             .AddSignInManager<SignInManager<UserEntity>>()
-            .AddEntityFrameworkStores<AlumniDbContext>();
+            .AddEntityFrameworkStores<AlumniDbContext>()
+            .AddDefaultTokenProviders();
 
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(opts =>
