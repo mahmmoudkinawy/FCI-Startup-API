@@ -1,6 +1,4 @@
-﻿using System.Net;
-
-namespace API.Processes.Account;
+﻿namespace API.Processes.Account;
 public sealed class ForgotPasswordProcess
 {
     public sealed class Request : IRequest<Result<Response>>
@@ -23,28 +21,16 @@ public sealed class ForgotPasswordProcess
     public sealed class Handler : IRequestHandler<Request, Result<Response>>
     {
         private readonly UserManager<UserEntity> _userManager;
-        private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IEmailSender _emailSender;
-        private readonly IUrlHelperFactory _urlHelperFactory;
-        private readonly ILogger<Handler> _logger;
 
         public Handler(
             UserManager<UserEntity> userManager,
-            IHttpContextAccessor httpContextAccessor,
-            IEmailSender emailSender,
-            IUrlHelperFactory urlHelperFactory,
-            ILogger<Handler> logger)
+            IEmailSender emailSender)
         {
             _userManager = userManager ??
                 throw new ArgumentNullException(nameof(userManager));
-            _httpContextAccessor = httpContextAccessor ??
-                throw new ArgumentNullException(nameof(httpContextAccessor));
             _emailSender = emailSender ??
                 throw new ArgumentNullException(nameof(emailSender));
-            _urlHelperFactory = urlHelperFactory ??
-                throw new ArgumentNullException(nameof(urlHelperFactory));
-            _logger = logger ??
-                throw new ArgumentNullException(nameof(logger));
         }
 
         public async Task<Result<Response>> Handle(Request request, CancellationToken cancellationToken)
