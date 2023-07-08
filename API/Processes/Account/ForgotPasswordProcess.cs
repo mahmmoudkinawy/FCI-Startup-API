@@ -1,4 +1,6 @@
-﻿namespace API.Processes.Account;
+﻿using System.Net;
+
+namespace API.Processes.Account;
 public sealed class ForgotPasswordProcess
 {
     public sealed class Request : IRequest<Result<Response>>
@@ -24,12 +26,14 @@ public sealed class ForgotPasswordProcess
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IEmailSender _emailSender;
         private readonly IUrlHelperFactory _urlHelperFactory;
+        private readonly ILogger<Handler> _logger;
 
         public Handler(
             UserManager<UserEntity> userManager,
             IHttpContextAccessor httpContextAccessor,
             IEmailSender emailSender,
-            IUrlHelperFactory urlHelperFactory)
+            IUrlHelperFactory urlHelperFactory,
+            ILogger<Handler> logger)
         {
             _userManager = userManager ??
                 throw new ArgumentNullException(nameof(userManager));
@@ -39,6 +43,8 @@ public sealed class ForgotPasswordProcess
                 throw new ArgumentNullException(nameof(emailSender));
             _urlHelperFactory = urlHelperFactory ??
                 throw new ArgumentNullException(nameof(urlHelperFactory));
+            _logger = logger ??
+                throw new ArgumentNullException(nameof(logger));
         }
 
         public async Task<Result<Response>> Handle(Request request, CancellationToken cancellationToken)
@@ -49,24 +55,11 @@ public sealed class ForgotPasswordProcess
             {
                 var token = await _userManager.GeneratePasswordResetTokenAsync(user);
 
-                var httpContext = _httpContextAccessor.HttpContext;
-                var actionContext = new ActionContext(httpContext, httpContext.GetRouteData(),
-                    new ControllerActionDescriptor());
-
-                var urlHelper = _urlHelperFactory.GetUrlHelper(actionContext);
-
-                var resetPasswordLink = urlHelper.Action("ResetPassword", "Account", new
-                {
-                    userId = user.Id,
-                    token
-                });
-
-                var forgotPasswordRequest = httpContext.Request;
-                var baseUrl = $"{forgotPasswordRequest.Scheme}://{forgotPasswordRequest.Host}{forgotPasswordRequest.PathBase}{resetPasswordLink}";
+                var frontendResetLink = $"http://localhost:4200/reset-password?userId={user.Id}&token={WebUtility.UrlEncode(token)}";
 
                 var emailTemplateContent = File.ReadAllText("wwwroot/Templates/Forgot-Password.html");
 
-                emailTemplateContent = emailTemplateContent.Replace("[PasswordResetLink]", baseUrl)
+                emailTemplateContent = emailTemplateContent.Replace("[PasswordResetLink]", frontendResetLink)
                                                            .Replace("[UserName]", $"{user.FirstName}. {user.LastName}");
 
                 await _emailSender.SendEmailAsync(
