@@ -14,7 +14,7 @@ public class AccountController : ControllerBase
     }
 
     /// <summary>
-    /// reset password endpoint to take the userId and token for the user.
+    ///  reset password endpoint to take the userId and token for the user.
     /// </summary>
     /// <param name="request"></param>
     /// <param name="cancellationToken"></param>
@@ -34,6 +34,7 @@ public class AccountController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> ResetPassword(
+        [FromQuery] ResetPasswordParams resetPasswordParams,
         [FromBody] ResetPasswordProcess.Request request,
         CancellationToken cancellationToken)
     {
