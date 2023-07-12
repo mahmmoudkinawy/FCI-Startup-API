@@ -42,6 +42,7 @@ public sealed class GetCommentsByPostIdProcess
         {
             var comments = await _context.Comments
                 .Include(c => c.Owner)
+                    .ThenInclude(c => c.Images)
                 .Where(c => c.PostId == request.PostId)
                 .ToListAsync(cancellationToken: cancellationToken);
 

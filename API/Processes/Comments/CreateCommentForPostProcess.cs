@@ -66,7 +66,9 @@ public sealed class CreateCommentForPostProcess
             request.PostId ??= postId;
 
             var post = await _context.Posts
-                .FindAsync(new object?[] { postId }, cancellationToken: cancellationToken);
+                .Include(p => p.User)
+                    .ThenInclude(u => u.Images)
+                .FirstOrDefaultAsync(p => p.Id == postId, cancellationToken: cancellationToken);
 
             if (post is null)
             {
