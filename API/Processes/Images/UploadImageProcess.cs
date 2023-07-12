@@ -1,5 +1,4 @@
 ﻿namespace API.Processes.Images;
-
 public sealed class UploadImageProcess
 {
     public sealed class Request : IRequest<Result<Response>>
@@ -32,16 +31,20 @@ public sealed class UploadImageProcess
     public sealed class Handler : IRequestHandler<Request, Result<Response>>
     {
         private readonly IPhotoService _photoService;
+        private readonly IClarityImage _clarityImage;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly AlumniDbContext _context;
 
         public Handler(
             IPhotoService photoService,
+            IClarityImage clarityImage,
             IHttpContextAccessor httpContextAccessor,
             AlumniDbContext context)
         {
             _photoService = photoService ??
                 throw new ArgumentNullException(nameof(photoService));
+            _clarityImage = clarityImage ??
+                throw new ArgumentNullException(nameof(clarityImage));
             _httpContextAccessor = httpContextAccessor ??
                 throw new ArgumentNullException(nameof(httpContextAccessor));
             _context = context ??
@@ -56,9 +59,9 @@ public sealed class UploadImageProcess
                 .Include(p => p.Images)
                 .FirstOrDefaultAsync(u => u.Id == userId, cancellationToken);
 
-            var imageUploadResult = await _photoService.UploadPhotoAsync(request.ImageFile);
+            var imageUploadUri = await _photoService.UploadPhotoAsync(request.ImageFile);
 
-            if (string.IsNullOrWhiteSpace(imageUploadResult))
+            if (string.IsNullOrWhiteSpace(imageUploadUri))
             {
                 return Result<Response>.Failure(new List<string>
                 {
@@ -66,15 +69,18 @@ public sealed class UploadImageProcess
                 });
             }
 
+            var imageMetaDataResult = await _clarityImage.GetResultsAsync(imageUploadUri);
+
             var image = new ImageEntity
             {
                 Id = Guid.NewGuid(),
                 IsMain = user.Images.Count == 0,
                 UserId = userId,
-                ImageUrl = imageUploadResult,
-                CreatedAt = DateTime.UtcNow
+                ImageUrl = imageUploadUri,
+                CreatedAt = DateTime.UtcNow,
+                ImageMetadata = imageMetaDataResult
             };
-
+            
             _context.Images.Add(image);
             await _context.SaveChangesAsync(cancellationToken);
 

@@ -13,6 +13,7 @@ public sealed class CreatePostProcess
         public DateTime CreatedAt { get; init; }
         public DateTime UpdatedAt { get; set; }
         public string Content { get; set; }
+        public string ImageMetadata { get; set; }
         public Guid UserId { get; set; }
     }
 
@@ -74,12 +75,14 @@ public sealed class CreatePostProcess
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IMapper _mapper;
         private readonly IPhotoService _photoService;
+        private readonly IClarityImage _clarityImage;
 
         public Handler(
             AlumniDbContext context,
             IHttpContextAccessor httpContextAccessor,
             IMapper mapper,
-            IPhotoService photoService)
+            IPhotoService photoService,
+            IClarityImage clarityImage)
         {
             _context = context ??
                 throw new ArgumentNullException(nameof(context));
@@ -89,6 +92,8 @@ public sealed class CreatePostProcess
                 throw new ArgumentNullException(nameof(mapper));
             _photoService = photoService ??
                 throw new ArgumentNullException(nameof(mapper));
+            _clarityImage = clarityImage ??
+                throw new ArgumentNullException(nameof(clarityImage));
         }
 
         public async Task<Result<Response>> Handle(Request request, CancellationToken cancellationToken)
@@ -103,14 +108,17 @@ public sealed class CreatePostProcess
 
             if(request.Image is not null)
             {
-                var imageUploadResult = await _photoService.UploadPhotoAsync(request.Image);
+                var imageUploadUri = await _photoService.UploadPhotoAsync(request.Image);
+
+                var imageMetaDataResult = await _clarityImage.GetResultsAsync(imageUploadUri);
 
                 var imageToCreate = new ImageEntity
                 {
                     Id = Guid.NewGuid(),
                     Post = postToAdd,
                     CreatedAt = DateTime.UtcNow,
-                    ImageUrl = imageUploadResult
+                    ImageUrl = imageUploadUri,
+                    ImageMetadata = imageMetaDataResult
                 };
 
                 _context.Images.Add(imageToCreate);

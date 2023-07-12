@@ -42,3 +42,4 @@ global using RestSharp.Authenticators;
 global using Microsoft.AspNetCore.Mvc.Controllers;
 global using Microsoft.AspNetCore.Mvc.Routing;
 global using System.Net;
+global using Newtonsoft.Json;

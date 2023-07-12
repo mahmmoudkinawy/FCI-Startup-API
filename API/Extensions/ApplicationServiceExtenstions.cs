@@ -14,6 +14,8 @@ public static class ApplicationServiceExtensions
 
         services.AddScoped<ITokenService, TokenService>();
 
+        services.AddScoped<IClarityImage, ClarityImage>();
+
         services.AddScoped<IPhotoService, PhotoService>();
 
         services.AddTransient<IEmailSender, EmailSender>();

@@ -1,5 +1,4 @@
 ﻿namespace API.Middleware;
-
 public sealed class ExceptionMiddleware
 {
     private readonly RequestDelegate _next;
@@ -47,7 +46,7 @@ public sealed class ExceptionMiddleware
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase
             };
 
-            var json = JsonSerializer.Serialize(response, options);
+            var json = System.Text.Json.JsonSerializer.Serialize(response, options);
 
             await context.Response.WriteAsync(json);
         }

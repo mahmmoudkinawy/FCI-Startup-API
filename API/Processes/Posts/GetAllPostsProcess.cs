@@ -15,6 +15,7 @@ public sealed class GetAllPostsProcess
         public DateTime UpdatedAt { get; set; }
         public string Content { get; set; }
         public string PostImageUrl { get; set; }
+        public string ImageMetadata { get; set; }
         public bool IsLikedByCurrentUser { get; set; }
         public Guid OwnerId { get; set; }
         public string OwnerName { get; set; }
@@ -29,6 +30,7 @@ public sealed class GetAllPostsProcess
                 .ForMember(p => p.OwnerId, dest => dest.MapFrom(src => src.User.Id))
                 .ForMember(p => p.OwnerName, dest => dest.MapFrom(src => $"{src.User.FirstName} {src.User.LastName}"))
                 .ForMember(p => p.OwnerImageUrl, dest => dest.MapFrom(src => src.User.Images.FirstOrDefault(i => i.IsMain)!.ImageUrl))
+                .ForMember(p => p.ImageMetadata, dest => dest.MapFrom(src => src.Images.OrderByDescending(x => x.CreatedAt)!.FirstOrDefault()!.ImageMetadata))
                 .ForMember(p => p.PostImageUrl, dest => dest.MapFrom(src => src.Images.OrderByDescending(x => x.CreatedAt).FirstOrDefault()!.ImageUrl));
         }
     }
@@ -52,6 +54,8 @@ public sealed class GetAllPostsProcess
         public async Task<PagedList<Response>> Handle(Request request, CancellationToken cancellationToken)
         {
             var postsQuery = _context.Posts
+                .Include(p => p.Images)
+                .OrderByDescending(p => p.CreatedAt)
                 .AsQueryable();
 
             if (!string.IsNullOrWhiteSpace(request.Keyword))
@@ -64,7 +68,7 @@ public sealed class GetAllPostsProcess
             var likedPostIdsByCurrentUser = await _context.Likes
                 .Where(l => l.UserId == currentUserId)
                 .Select(l => l.PostId)
-                .ToListAsync();
+                .ToListAsync(cancellationToken: cancellationToken);
 
             var responses = await PagedList<Response>.CreateAsync(
                 postsQuery.ProjectTo<Response>(_mapper.ConfigurationProvider),

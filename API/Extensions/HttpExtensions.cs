@@ -15,7 +15,7 @@ public static class HttpExtensions
             pageSize = itemsPerPage
         };
 
-        response.Headers.Add("X-Pagination", JsonSerializer.Serialize(paginationMetaData));
+        response.Headers.Add("X-Pagination", System.Text.Json.JsonSerializer.Serialize(paginationMetaData));
         response.Headers.Add("Access-Control-Expose-Headers", "X-Pagination");
     }
 }

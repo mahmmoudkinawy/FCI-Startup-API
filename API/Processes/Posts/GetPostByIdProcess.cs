@@ -13,6 +13,7 @@ public sealed class GetPostByIdProcess
         public DateTime UpdatedAt { get; set; }
         public string Content { get; set; }
         public string PostImageUrl { get; set; }
+        public string ImageMetadata { get; set; }
         public bool IsLikedByCurrentUser { get; set; }
         public Guid UserId { get; set; }
     }
@@ -22,7 +23,8 @@ public sealed class GetPostByIdProcess
         public Mapper()
         {
             CreateMap<PostEntity, Response>()
-                .ForMember(p => p.PostImageUrl, dest => dest.MapFrom(src => src.Images.OrderByDescending(x => x.CreatedAt).FirstOrDefault()!.ImageUrl));
+                .ForMember(p => p.PostImageUrl, dest => dest.MapFrom(src => src.Images.OrderByDescending(x => x.CreatedAt).FirstOrDefault()!.ImageUrl))
+                .ForMember(p => p.ImageMetadata, dest => dest.MapFrom(src => src.Images.OrderByDescending(x => x.CreatedAt).FirstOrDefault()!.ImageMetadata));
         }
     }
 

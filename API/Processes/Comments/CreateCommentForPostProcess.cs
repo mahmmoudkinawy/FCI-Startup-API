@@ -3,7 +3,7 @@ public sealed class CreateCommentForPostProcess
 {
     public sealed class Request : IRequest<Result<Response>>
     {
-        [JsonIgnore]
+        [System.Text.Json.Serialization.JsonIgnore]
         public Guid? PostId { get; set; }
         public string Content { get; set; }
     }
