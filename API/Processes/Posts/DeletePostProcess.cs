@@ -1,5 +1,4 @@
 ﻿namespace API.Processes.Posts;
-
 public sealed class DeletePostProcess
 {
     public sealed class Request : IRequest<Result<Response>>
@@ -30,6 +29,7 @@ public sealed class DeletePostProcess
 
             var post = await _context.Posts
                 .Include(i => i.Images)
+                .Include(i => i.Comments)
                 .FirstOrDefaultAsync(p =>
                     p.Id == request.PostId &&
                     p.UserId == userId, cancellationToken: cancellationToken);
@@ -45,6 +45,12 @@ public sealed class DeletePostProcess
             {
                 var images = post.Images.ToList();
                 _context.Images.RemoveRange(images);
+            }
+
+            if (post.Comments.Any())
+            {
+                var comments = post.Comments.ToList();
+                _context.Comments.RemoveRange(comments);
             }
 
             if (await _context.SaveChangesAsync(cancellationToken) > 0)
