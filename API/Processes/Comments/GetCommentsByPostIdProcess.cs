@@ -12,6 +12,7 @@ public sealed class GetCommentsByPostIdProcess
         public string Content { get; set; }
         public DateTime CreatedAt { get; set; }
         public string OwnerImageUrl { get; set; }
+        public string CommentOwner { get; set; }
     }
 
     public sealed class Mapper : Profile
@@ -19,7 +20,8 @@ public sealed class GetCommentsByPostIdProcess
         public Mapper()
         {
             CreateMap<CommentEntity, Response>()
-                .ForMember(dest => dest.OwnerImageUrl, opt => opt.MapFrom(src => src.Owner.Images.MaxBy(i => i.CreatedAt).ImageUrl));
+                .ForMember(dest => dest.OwnerImageUrl, opt => opt.MapFrom(src => src.Owner.Images.MaxBy(i => i.CreatedAt).ImageUrl))
+                .ForMember(dest => dest.CommentOwner, opt => opt.MapFrom(src => $"{src.Owner.FirstName} {src.Owner.LastName}"));
         }
     }
 

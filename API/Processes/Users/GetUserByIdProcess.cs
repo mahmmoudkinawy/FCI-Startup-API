@@ -1,5 +1,4 @@
 ﻿namespace API.Processes.Users;
-
 public sealed class GetUserByIdProcess
 {
     public sealed class Request : IRequest<Result<Response>>
@@ -15,10 +14,18 @@ public sealed class GetUserByIdProcess
         public DateTime JoinedAt { get; set; }
         public DateTime GraduationYear { get; set; }
         public string ImageUrl { get; set; }
-        public ICollection<PostDto> Posts { get; set; }
+        public ICollection<ImageResponse> Images { get; set; }
+        public ICollection<PostResponse> Posts { get; set; }
     }
 
-    public sealed class PostDto
+    public sealed class ImageResponse
+    {
+        public Guid Id { get; set; }
+        public string ImageUrl { get; set; }
+        public string ImageMetadata { get; set; }
+    }
+
+    public sealed class PostResponse
     {
         public Guid Id { get; set; }
         public DateTime CreatedAt { get; set; }
@@ -35,8 +42,11 @@ public sealed class GetUserByIdProcess
                 .ForMember(dest => dest.Age, opt => opt.MapFrom(u => u.DateOfBirth.CalculateAge()))
                 .ForMember(dest => dest.FullName, opt => opt.MapFrom(u => $"{u.FirstName} {u.LastName}"))
                 .ForMember(dest => dest.ImageUrl, opt => opt.MapFrom(o => o.Images.FirstOrDefault(p => p.IsMain).ImageUrl));
-            CreateMap<PostEntity, PostDto>()
+            
+            CreateMap<PostEntity, PostResponse>()
                 .ForMember(dest => dest.ImageUrl, opt => opt.MapFrom(i => i.Images.MaxBy(pi => pi.CreatedAt).ImageUrl));
+
+            CreateMap<PostEntity, ImageResponse>();
         }
     }
 

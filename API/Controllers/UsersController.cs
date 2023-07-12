@@ -63,6 +63,27 @@ public sealed class UsersController : ControllerBase
     }
 
     /// <summary>
+    /// end point for getting the current current user posts.
+    /// </summary>
+    /// <param name="request"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns>Returns posts for the current user.</returns>
+    /// <response code="200">Returns the logged in user.</response>
+    /// <response code="401">User does not exist.</response>
+    [HttpGet("current-user-posts")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<IActionResult> GetCurrentUserPosts(
+        CancellationToken cancellationToken)
+    {
+        var response = await _mediator.Send(
+            new CurrentUserPostsProcess.Request { },
+            cancellationToken);
+
+        return Ok(response);
+    }
+
+    /// <summary>
     /// end point for getting the current logged in user.
     /// </summary>
     /// <param name="request"></param>

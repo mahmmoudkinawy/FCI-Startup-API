@@ -14,6 +14,7 @@ public sealed class CreateCommentForPostProcess
         public string Content { get; set; }
         public DateTime CreatedAt { get; set; }
         public string OwnerImageUrl { get; set; }
+        public string CommentOwner { get; set; }
     }
 
     public sealed class Mapper : Profile
@@ -21,7 +22,8 @@ public sealed class CreateCommentForPostProcess
         public Mapper()
         {
             CreateMap<CommentEntity, Response>()
-                .ForMember(dest => dest.OwnerImageUrl, opt => opt.MapFrom(src => src.Owner.Images.MaxBy(i => i.CreatedAt).ImageUrl));
+                .ForMember(dest => dest.OwnerImageUrl, opt => opt.MapFrom(src => src.Owner.Images.MaxBy(i => i.CreatedAt).ImageUrl))
+                .ForMember(dest => dest.CommentOwner, opt => opt.MapFrom(src => $"{src.Owner.FirstName} {src.Owner.LastName}"));
         }
     }
 
@@ -75,13 +77,17 @@ public sealed class CreateCommentForPostProcess
                 return Result<Response>.Failure(new List<string> { "There is not post with the given Id." });
             }
 
+            var currentUser = await _context.Users
+                .Include(p => p.Images)
+                .FirstOrDefaultAsync(i => i.Id == currentUserId, cancellationToken: cancellationToken);
+
             var comment = new CommentEntity
             {
                 Id = Guid.NewGuid(),
                 Content = request.Content,
                 CreatedAt = DateTime.UtcNow,
-                OwnerId = currentUserId,
-                PostId = post.Id
+                PostId = post.Id,
+                Owner = currentUser
             };
 
             _context.Comments.Add(comment);
