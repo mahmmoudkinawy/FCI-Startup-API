@@ -25,7 +25,7 @@ public static class ApplicationServiceExtensions
         services.AddAutoMapper(Assembly.GetExecutingAssembly());
 
         services.AddDbContext<AlumniDbContext>(options =>
-            options.UseSqlServer("Server=alumni-database.mssql.somee.com;Database=alumni-database;User Id=asdqwkdkqwo_SQLLogin_1;Password=v4gdtfxx7u;TrustServerCertificate=True;"));
+            options.UseSqlServer(config.GetConnectionString(Constants.DefaultConnection)));
 
         return services;
     }

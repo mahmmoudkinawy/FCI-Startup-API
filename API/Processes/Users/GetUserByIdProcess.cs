@@ -46,7 +46,7 @@ public sealed class GetUserByIdProcess
             CreateMap<PostEntity, PostResponse>()
                 .ForMember(dest => dest.ImageUrl, opt => opt.MapFrom(i => i.Images.MaxBy(pi => pi.CreatedAt).ImageUrl));
 
-            CreateMap<PostEntity, ImageResponse>();
+            CreateMap<ImageEntity, ImageResponse>();
         }
     }
 
